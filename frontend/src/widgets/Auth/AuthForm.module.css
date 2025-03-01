@@ -1,0 +1,112 @@
+
+.container {
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--foreground);
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    color: var(--muted-foreground);
+    font-size: 0.875rem;
+}
+
+.modeSwitch {
+    display: flex;
+    background-color: var(--secondary);
+    padding: 0.25rem;
+    border-radius: var(--radius);
+    margin-bottom: 2rem;
+}
+
+.modeButton {
+    flex: 1;
+    padding: 0.5rem;
+    text-align: center;
+    border-radius: calc(var(--radius) - 0.25rem);
+    color: var(--muted-foreground);
+    transition: all 0.2s ease;
+}
+
+.modeButton.active {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.formGroup label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--foreground);
+}
+
+.formGroup input {
+    padding: 0.75rem;
+    background-color: var(--secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--foreground);
+    font-size: 0.875rem;
+    transition: border-color 0.2s ease;
+}
+
+.formGroup input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.formGroup input::placeholder {
+    color: var(--muted-foreground);
+}
+
+.submitButton {
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+.roleSwitch {
+  display: flex;
+  background-color: var(--secondary);
+  padding: 0.25rem;
+  border-radius: var(--radius);
+  margin-top: 0.5rem;
+}
+
+.roleButton {
+  flex: 1;
+  padding: 0.5rem;
+  text-align: center;
+  border-radius: calc(var(--radius) - 0.25rem);
+  color: var(--muted-foreground);
+  transition: all 0.2s ease;
+}
+
+.roleButton.active {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}

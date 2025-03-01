@@ -1,15 +1,10 @@
-from typing import Sequence
-
 from fastapi import APIRouter, HTTPException
-from pydantic import EmailStr
 from starlette.requests import Request
 from starlette.responses import Response, JSONResponse
 
-from api.requests.auth_request import AuthRequest
-from api.requests.create_user import CreateUserRequest
-from api.responses.user_response import UserResponse
+from api.models.auth_request import AuthRequest
+from api.models.user_models import CreateUserRequest, UserResponse
 from dependencies import UserServiceDep, AuthServiceDep
-from domain.user import PublicRole
 
 router = APIRouter(
     tags=["account"]

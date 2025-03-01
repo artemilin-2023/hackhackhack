@@ -1,13 +1,16 @@
 import math
+import pandas as pd
+
 from typing import Optional
 
+from fastapi import UploadFile
 from starlette.exceptions import HTTPException
 from starlette import status
 
 from application.services.user_services import UserService
 from domain.lot import Lot, LotStatus
 from infrastructure.repositories.lot_repository import LotRepository
-from api.requests.lot_models import (
+from api.models.lot_models import (
     LotCreate, 
     LotUpdate, 
     PaginatedLots, 
@@ -23,6 +26,9 @@ class LotService:
     def create_lot(self, lot_data: LotCreate) -> Lot:
         lot = Lot(**lot_data.model_dump())
         return self._repository.create(lot)
+    
+    def upload_from_csv(self, file: UploadFile) -> None:
+        df = pd.read_csv(file.file)
 
     def get_lots(
         self,

@@ -2,7 +2,7 @@ from typing import Optional
 from fastapi import APIRouter, Query
 from starlette import status
 
-from api.requests.lot_models import (
+from api.models.lot_models import (
     LotCreate,
     LotRead,
     PaginatedLots,

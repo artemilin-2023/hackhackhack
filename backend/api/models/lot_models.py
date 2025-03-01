@@ -1,9 +1,9 @@
 from datetime import date
 from typing import List, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from domain.lot import LotStatus, OilType
-
+from api.models.oil_pump_models import OilPumpRead
 
 class LotBase(BaseModel):
     lot_expiration_date: date
@@ -14,8 +14,7 @@ class LotBase(BaseModel):
     total_price: float
     price_per_ton: float
     oil_type: OilType
-    oil_pump_id: int
-
+    oil_pump: OilPumpRead
 
 class LotCreate(LotBase):
     pass

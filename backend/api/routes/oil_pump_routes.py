@@ -2,7 +2,7 @@ from typing import Optional
 from fastapi import APIRouter, Query
 from starlette import status
 
-from api.requests.oil_pump_models import (
+from api.models.oil_pump_models import (
     OilPumpCreate,
     OilPumpRead,
     OilPumpUpdate,

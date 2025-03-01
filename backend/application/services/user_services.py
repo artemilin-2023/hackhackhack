@@ -4,8 +4,8 @@ from fastapi import Depends, HTTPException
 from starlette.requests import Request
 from starlette.responses import Response
 
-from api.requests.auth_request import AuthRequest
-from api.requests.create_user import CreateUserRequest
+from api.models.auth_request import AuthRequest
+from api.models.user_models import CreateUserRequest
 from application.services.auth_service import AuthService
 from domain.user import User, Role
 from infrastructure.auth.jwt_manager import get_password_hash

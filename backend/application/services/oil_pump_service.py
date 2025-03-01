@@ -5,7 +5,7 @@ from starlette import status
 
 from domain.lot import OilPump
 from infrastructure.repositories.oil_pump_repository import OilPumpRepository
-from api.requests.oil_pump_models import (
+from api.models.oil_pump_models import (
     OilPumpCreate,
     OilPumpUpdate,
     PaginatedOilPumps,

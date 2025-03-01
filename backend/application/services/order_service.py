@@ -7,8 +7,8 @@ from application.services.user_services import UserService
 from domain.user import Role
 from infrastructure.repositories.order_repository import OrderRepository
 from domain.order import Order, OrderStatus
-from api.requests.order_models import OrderCreate, OrderUpdateStatus, PaginatedOrders
-from api.requests.lot_models import Pagination
+from api.models.order_models import OrderCreate, OrderUpdateStatus, PaginatedOrders
+from api.models.lot_models import Pagination
 
 
 class OrderService:

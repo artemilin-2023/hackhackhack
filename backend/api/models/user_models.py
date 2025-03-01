@@ -1,8 +1,6 @@
-from typing import Union
-
 from pydantic import BaseModel, EmailStr
 
-from domain.user import PublicRole
+from domain.user import PublicRole, Role
 
 
 class CreateUserRequest(BaseModel):
@@ -10,3 +8,10 @@ class CreateUserRequest(BaseModel):
     email: EmailStr
     password: str
     role: PublicRole
+
+
+class UserResponse(BaseModel):
+    id: int
+    email: EmailStr
+    name: str
+    role: Role

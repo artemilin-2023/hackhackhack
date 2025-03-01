@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from datetime import datetime
 
 from domain.order import Order, OrderStatus
-from api.requests.lot_models import Pagination
+from api.models.lot_models import Pagination
 
 
 class OrderCreate(BaseModel):

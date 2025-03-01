@@ -7,6 +7,7 @@ from fastapi import FastAPI, HTTPException
 from starlette import status
 from starlette.requests import Request
 from starlette.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 from api.routes import user_routes, lot_routes
 from dependencies import get_static_uibanskie_pythonskie_dependence_injection_user_service
@@ -20,6 +21,14 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
+# Настройка CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(user_routes.router)
 app.include_router(lot_routes.router)

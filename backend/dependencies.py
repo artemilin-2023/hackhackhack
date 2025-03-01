@@ -30,10 +30,6 @@ def get_lot_repository(session=Depends(get_session)):
     return LotRepository(session)
 
 
-def get_lot_service(repository=Depends(get_lot_repository), user_service=Depends(get_user_service)):
-    return LotService(repository, user_service)
-
-
 def get_order_repositories(session=Depends(get_session)):
     return OrderRepository(session)
 
@@ -50,7 +46,11 @@ def get_oil_pump_service(repository=Depends(get_oil_pump_repository)):
     return OilPumpService(repository)
 
 
-def get_static_uibanskie_pythonskie_dependence_injection_user_service():
+def get_lot_service(repository=Depends(get_lot_repository), oil_pump_service=Depends(get_oil_pump_service)):
+    return LotService(repository, oil_pump_service)
+
+
+def get_static_user_service():
     session = get_static_session()
     rep = get_user_repository(session)
     auth = get_auth_service(rep)

@@ -13,9 +13,20 @@ from starlette.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.routes import user_routes, lot_routes, oil_pump_routes
-from dependencies import get_static_uibanskie_pythonskie_dependence_injection_user_service
+from dependencies import get_static_user_service
 from domain.user import Role
 from infrastructure.database import on_start_up
+
+
+# =============================
+# Отказ от ответственности
+# =============================
+#
+# Я не пайтон разработчик и никогда им не был, 
+# про ограничения на стек я узнал за день до хакатона,
+# поэтому некоторые вещи могут быть сделаны не так, как положено.
+#
+# =============================
 
 load_dotenv()
 
@@ -30,7 +41,6 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-# Настройка CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=get_cors_origins(),
@@ -45,9 +55,9 @@ app.include_router(oil_pump_routes.router)
 # app.include_router(order_routes.router)
 
 restricted_routes = {
-    # любой маршрут, начинающийся с /lots
-    r"^\/lots.*$": {
-        "methods": ["POST", "DELETE", "PATCH"],
+    # любой маршрут, начинающийся с /lots, кроме /lots/active
+    r"^\/lots(\/(?!active$)(\d+)?)?$": {
+        "methods": ["POST", "DELETE", "PATCH", "GET"],
         "required_roles": [Role.admin]
     },
     r"^\/oil-pumps.*$": {
@@ -62,7 +72,7 @@ restricted_routes = {
 }
 
 # боже храни шарпы, слава майкрософт и его DI контейнерам
-app.state._user_service = get_static_uibanskie_pythonskie_dependence_injection_user_service()
+app.state._user_service = get_static_user_service()
 
 @app.middleware("http")
 async def role_middleware(request: Request, call_next):

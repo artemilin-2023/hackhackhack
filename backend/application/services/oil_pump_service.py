@@ -60,7 +60,10 @@ class OilPumpService:
                 detail=f"Oil pump with id {pump_id} not found"
             )
         return pump
-
+    
+    def get_oil_pump_by_name_and_region(self, name: str, region: str) -> OilPump:
+        pump = self._repository.get_by_name_and_region(name, region)
+        return pump
     def update_oil_pump(self, pump_id: int, pump_data: OilPumpUpdate) -> OilPump:
         updated_pump = self._repository.update(
             pump_id,

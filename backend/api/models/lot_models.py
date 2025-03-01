@@ -1,7 +1,7 @@
 from datetime import date
 from typing import List, Optional
 from pydantic import BaseModel
-
+from api.models.pagination import Pagination
 from domain.lot import LotStatus, OilType
 from api.models.oil_pump_models import OilPumpRead
 
@@ -35,25 +35,18 @@ class LotRead(LotBase):
     class Config:
         from_attributes = True
 
-
-class Pagination(BaseModel):
-    total_pages: int
-    current_page: int
-    has_next: bool
-    has_prev: bool
-    total_items: int
-    page_size: int
-
-
 class PaginatedLots(BaseModel):
     items: List[LotRead]
     pagination: Pagination
 
-
-class LotFilter(BaseModel):
-    status: Optional[LotStatus] = None
+class PublicLotFilter(BaseModel):
     oil_type: Optional[OilType] = None
     min_price: Optional[float] = None
     max_price: Optional[float] = None
     region: Optional[str] = None
+    search: Optional[str] = None
     available_weight_min: Optional[int] = None
+
+class LotFilter(PublicLotFilter):
+    status: Optional[LotStatus] = None
+    

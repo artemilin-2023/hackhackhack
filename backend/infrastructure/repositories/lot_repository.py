@@ -1,6 +1,6 @@
-from typing import Optional, List, Dict, Any
-from sqlalchemy import func
-from sqlmodel import Session, select, desc, asc
+from typing import Optional, List, Dict, Any, Tuple
+from sqlalchemy import Tuple, func, or_
+from sqlmodel import Session, select, desc, asc, or_
 from domain.lot import Lot, LotStatus, OilPump, OilType
 
 
@@ -24,11 +24,20 @@ class LotRepository:
         filters: Optional[Dict[str, Any]] = None,
         sort_by: str = "id",
         sort_desc: bool = False
-    ) -> tuple[List[Lot], int]:
+    ):
         query = select(Lot)
 
-        # Применяем фильтры
         if filters:
+            if "search" in filters and filters["search"]:
+                search_term = filters["search"]
+                search_pattern = f"%{search_term}%"
+                query = query.join(OilPump).where(
+                    or_(
+                        OilPump.region.ilike(search_pattern),
+                        OilPump.name.ilike(search_pattern),
+                        Lot.oil_type.in_([ot for ot in OilType if search_term.lower() in ot.value.lower()])
+                    )
+                )
             if "status" in filters:
                 query = query.where(Lot.status == filters["status"])
             if "oil_type" in filters:
@@ -38,14 +47,14 @@ class LotRepository:
             if "max_price" in filters:
                 query = query.where(Lot.price_per_ton <= filters["max_price"])
             if "region" in filters:
-                query = query.join(OilPump).where(OilPump.region == filters["region"])
+                query = query.join(OilPump, isouter=True).where(OilPump.region == filters["region"])
             if "available_weight_min" in filters:
                 query = query.where(Lot.available_weight >= filters["available_weight_min"])
 
+        total_count = len(self.session.exec(query).all())
+
         sort_column = getattr(Lot, sort_by, Lot.id)
         query = query.order_by(desc(sort_column) if sort_desc else asc(sort_column))
-
-        total_count = self.session.exec(select(Lot)).all().__len__()
 
         query = query.offset((page - 1) * size).limit(size)
 
@@ -82,15 +91,6 @@ class LotRepository:
     def get_by_oil_type(self, oil_type: OilType) -> List[Lot]:
         query = select(Lot).where(Lot.oil_type == oil_type)
         return self.session.exec(query).all()
-
-    def get_active_lots(self) -> List[Lot]:
-        query = select(Lot).where(Lot.status != LotStatus.SOLD)\
-                          .where(Lot.status != LotStatus.INACTIVE)
-        return self.session.exec(query).all()
-
-    def get_all_lots(self, page_number: int = 1, page_size: int = 10):
-        statement = select(Lot).offset((page_number - 1) * page_size).limit(page_size)
-        return self.session.exec(statement).all()
 
     def update_lot(self, lot: Lot, lot_data):
         for key, value in lot_data.items():

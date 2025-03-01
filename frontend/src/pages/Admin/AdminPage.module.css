@@ -1,0 +1,5 @@
+.Child {
+	display: flex;
+	flex-wrap: nowrap;
+	gap: 16px;
+}

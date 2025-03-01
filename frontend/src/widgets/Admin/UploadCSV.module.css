@@ -1,0 +1,62 @@
+.container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--foreground);
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    color: var(--muted-foreground);
+    font-size: 0.875rem;
+}
+
+.dropzone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 1rem;
+}
+
+.dropzone:hover {
+    border-color: var(--primary);
+}
+
+.dragging {
+    border-color: var(--primary);
+    background-color: var(--secondary);
+}
+
+.fileInput {
+    display: none;
+}
+
+.dropzoneContent {
+    color: var(--muted-foreground);
+}
+
+.dropzoneHint {
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+.uploadButton {
+    width: 100%;
+    margin-top: 1rem;
+} 

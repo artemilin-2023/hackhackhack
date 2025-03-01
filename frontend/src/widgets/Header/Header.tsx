@@ -1,19 +1,70 @@
-import { Link } from "react-router-dom"
+import { NavLink } from "react-router-dom"
+import { useStore } from "shared/store/store"
+import { observer } from "mobx-react-lite"
 import styles from './Header.module.css'
 
-export const Header = () => {
-    return (
-        <header className={styles.HeaderWrapper}>
-            <div className={styles.Header}>
-                <Link to="/" className={styles.Logo}>
-                    HackStore
-                </Link>
-            <nav className={styles.Nav}>
-                    <Link to="/products" className={styles.NavLink}>Товары</Link>
-                    <Link to="/cart" className={styles.NavLink}>Корзина</Link>
-                    <Link to="/auth" className={styles.NavLink + ' ' + styles.authButton}>Войти</Link>
-                </nav>
-            </div>
-        </header>
-    )
-}
+export const Header = observer(() => {
+	const store = useStore()
+
+	return (
+		<header className={styles.HeaderWrapper}>
+			<div className={styles.Header}>
+				<NavLink to="/" className={styles.Logo}>
+					HackStore
+				</NavLink>
+				<nav className={styles.Nav}>
+					<NavLink
+						to="/lots"
+						className={({ isActive }) =>
+							isActive ? `${styles.NavLink} ${styles.active}` : styles.NavLink
+						}
+					>
+						Товары
+					</NavLink>
+					<NavLink
+						to="/cart"
+						className={({ isActive }) =>
+							isActive ? `${styles.NavLink} ${styles.active}` : styles.NavLink
+						}
+					>
+						Корзина
+					</NavLink>
+					{store.user === null ? (
+						<NavLink
+							to="/auth"
+							className={({ isActive }) =>
+								isActive
+									? `${styles.NavLink} ${styles.authButton} ${styles.active}`
+									: `${styles.NavLink} ${styles.authButton}`
+							}
+						>
+							Войти
+						</NavLink>
+					) : (
+						<NavLink
+							to="/personal"
+							className={({ isActive }) =>
+								isActive ? `${styles.NavLink} ${styles.active}` : styles.NavLink
+							}
+						>
+							Личный кабинет
+						</NavLink>
+					)}
+					{store.user && store.user?.role !== "admin" && (
+
+						<NavLink
+							to="/admin"
+							className={({ isActive }) =>
+								isActive
+									? `${styles.NavLink} ${styles.authButton} ${styles.active}`
+									: `${styles.NavLink} ${styles.authButton}`
+							}
+						>
+							Админ-панель
+						</NavLink>
+					)}
+				</nav>
+			</div>
+		</header>
+	)
+})

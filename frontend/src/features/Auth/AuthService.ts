@@ -1,22 +1,25 @@
 import $api from "shared/api/api";
-import { IRegisterProps } from "./Auth.model"
+import { AxiosResponse } from "axios"
+import { IRegisterProps, IUser } from "./Auth.model"
 
+export default class AuthService {
 
-export const AuthService = {
-	async login(email: string, password: string) {
+	static async login(email: string, password: string) {
 		const response = await $api.post("/login", { email, password });
 		return response.data;
-	},
-	async register({ name, email, password, role }: IRegisterProps) {
+	}
+
+	static async register({ name, email, password, role }: IRegisterProps) {
 		const response = await $api.post("/register", { name, email, password, role });
 		return response.data;
-	},
-	async getMe() {
-		const response = await $api.get("/me");
-		return response.data;
-	},
-	async logOut() {
+	}
+	static async logOut() {
 		const response = await $api.get("/logout")
 		return response.data
 	}
+
+	static async getMe(): Promise<AxiosResponse<IUser>> {
+		return $api.get<IUser>("/me");
+	}
+
 }

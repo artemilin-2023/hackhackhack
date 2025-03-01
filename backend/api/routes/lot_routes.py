@@ -18,6 +18,12 @@ router = APIRouter(
     tags=["lots"]
 )
 
+@router.post("/update-expired", status_code=status.HTTP_200_OK)
+async def update_expired_lots(
+    service: LotServiceDep
+):
+    return service.update_expired_lots()
+
 @router.post("/", response_model=LotRead, status_code=status.HTTP_201_CREATED)
 async def create_lot(
     lot_data: LotCreate,

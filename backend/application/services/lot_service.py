@@ -200,3 +200,10 @@ class LotService:
             items=lots,
             pagination=pagination
         )
+
+    def update_expired_lots(self) -> dict:
+        updated_count = self._repository.update_expired_lots()
+        return {
+            "message": f"Updated {updated_count} expired lots to INACTIVE status",
+            "updated_count": updated_count
+        }

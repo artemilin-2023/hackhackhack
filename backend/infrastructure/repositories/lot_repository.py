@@ -2,6 +2,7 @@ from typing import Optional, List, Dict, Any, Tuple
 from sqlalchemy import Tuple, func, or_
 from sqlmodel import Session, select, desc, asc, or_
 from domain.lot import Lot, LotStatus, OilPump, OilType
+from datetime import date
 
 
 class LotRepository:
@@ -110,3 +111,20 @@ class LotRepository:
         return self.session.exec(
             select(func.count(Lot.id))
         ).one()
+
+    def update_expired_lots(self) -> int:
+        today = date.today()
+        
+        query = select(Lot).where(
+            Lot.status == LotStatus.CONFIRMED,
+            Lot.lot_expiration_date < today
+        )
+        
+        expired_lots = self.session.exec(query).all()
+        
+        for lot in expired_lots:
+            lot.status = LotStatus.INACTIVE
+            self.session.add(lot)
+        
+        self.session.commit()
+        return len(expired_lots)

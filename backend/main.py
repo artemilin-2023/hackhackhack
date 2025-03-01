@@ -17,6 +17,7 @@ from dependencies import get_static_user_service
 from domain.user import Role
 from infrastructure.database import on_start_up
 from common.logger import log
+from infrastructure.background_tasks import lot_expiration_checker
 
 
 # =============================
@@ -38,7 +39,12 @@ def get_cors_origins() -> List[str]:
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     on_start_up()
+    
+    await lot_expiration_checker.start()
+    
     yield
+    
+    await lot_expiration_checker.stop()
 
 app = FastAPI(lifespan=lifespan)
 

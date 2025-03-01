@@ -1,0 +1,51 @@
+name: hack
+
+services:
+  backend:
+    build: 
+      context: backend/notdotnet
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    environment:
+      - LOG_LEVEL=DEBUG
+      - DATABASE_CONNECTION_STRING=postgresql://postgres:password@postgres:5432
+      - JWT_VARY_SECRET_HASH_IN_PUBLIC_REPO=1965d3ece323947d9a778a9341cc68828e708842dc8f809750fcf9985f27d67e
+      - JWT_ALGORITHM=HS256
+      - JWT_ACCESS_TOKEN_EXPIRE_HOURS=24
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=database
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d database"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+
+
+  pgadmin:
+    container_name: pgadmin4
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: root@mail.xyz
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - 5050:80
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+
+
+volumes:
+  postgres-data:
+  pgadmin-data:
+    

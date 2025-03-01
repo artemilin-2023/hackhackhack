@@ -1,4 +1,3 @@
-import { CreateLotForm } from "widgets/Admin/CreateLotForm"
 import { UploadCSV } from "widgets/Admin/UploadCSV"
 import styles from "./AdminPage.module.css"
 import { Grid } from "shared/ui/grid"
@@ -16,7 +15,7 @@ export const AdminPage = observer(() => {
 			<div className={styles.Child}>
 				<h1>Все лоты</h1>
 				<Grid>
-					{store.lots.map((lot) => (
+					{store.lots?.map((lot) => (
 						<LotItem
 							lot={lot}
 						/>

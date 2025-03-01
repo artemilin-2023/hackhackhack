@@ -16,8 +16,8 @@ export default class LotsService {
 		available_weight_min?: number
 	): Promise<AxiosResponse<ILotResponse>> {
 		const params = new URLSearchParams({
-			page_number: page_number.toString(),
-			page_size: page_size.toString(),
+			page: page_number.toString(),
+			size: page_size.toString(),
 			...(sort_by && { sort_by }),
 			...(sort_desc !== undefined && { sort_desc: sort_desc.toString() }),
 			...(status && { status }),

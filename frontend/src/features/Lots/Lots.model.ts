@@ -1,6 +1,6 @@
 export interface ILotResponse {
-	lots: [
-		ILot
+	items: [
+		INewLot
 	]
 	pagination: {
 		total_pages: number;

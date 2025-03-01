@@ -1,0 +1,35 @@
+.form {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.weightInput {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.weightInput label {
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+}
+
+.weightInput input {
+    padding: 0.75rem;
+    background-color: var(--secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--foreground);
+    font-size: 0.875rem;
+}
+
+.maxWeight {
+    font-size: 0.75rem;
+    color: var(--muted-foreground);
+}
+
+.addButton {
+    width: 100%;
+} 

@@ -23,6 +23,22 @@ services:
       postgres:
         condition: service_healthy
         restart: true
+        
+  ftp-server:
+    build: ./ftp-server
+    ports:
+      - "21:21"
+      - "60000-60100:60000-60100"
+    volumes:
+      - ./ftp-server/files:/app/files
+    environment:
+      - FTP_USER=admin
+      - FTP_PASSWORD=asd
+      - FTP_PORT=21
+      - FTP_DIR=./files
+      - PASV_MIN_PORT=60000
+      - PASV_MAX_PORT=60100
+    container_name: ftp-server
 
 
   postgres:

@@ -19,7 +19,7 @@ export const AdminPage = observer(() => {
 	const PAGE_SIZE = 6
 
 	useEffect(() => {
-		store.getLots(
+		store.getAdminLots(
 			currentPage, 
 			PAGE_SIZE, 
 			sortBy, 

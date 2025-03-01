@@ -53,6 +53,7 @@ async def get_lots(
     region: Optional[str] = Query(None, description="Фильтр по региону"),
     oil_pump_name: Optional[str] = Query(None, description="Фильтр по названию нефтебазы"),
     available_weight_min: Optional[int] = Query(None, description="Минимальный доступный вес")
+    
 ) -> PaginatedLots:
     filters = LotFilter(
         status=status,

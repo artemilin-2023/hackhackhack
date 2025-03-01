@@ -36,7 +36,9 @@ class LotRepository:
                     or_(
                         OilPump.region.ilike(search_pattern),
                         OilPump.name.ilike(search_pattern),
-                        Lot.oil_type.in_([ot for ot in OilType if search_term.lower() in ot.value.lower()])
+                        Lot.oil_type.in_([ot for ot in OilType if search_term.lower() in ot.value.lower()]),
+                        Lot.ksss_fuel_code == search_term,
+                        Lot.ksss_nb_code == search_term
                     )
                 )
             if "status" in filters:

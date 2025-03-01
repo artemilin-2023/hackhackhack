@@ -64,24 +64,139 @@
     color: var(--muted-foreground);
 }
 
-.searchInput {
-    padding: 0.75rem;
-    padding-left: 2.5rem;
+.filterContainer {
+    position: relative;
+}
+
+.filterButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+}
+
+.filterBadge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: var(--primary);
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.filterPopover {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 320px;
     background-color: var(--card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    color: var(--foreground);
-    font-size: 0.875rem;
-    transition: all 0.2s ease;
-    width: 400px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    padding: 1rem;
 }
 
-.searchInput:focus {
-    outline: none;
-    border-color: var(--primary);
+.filterHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.75rem;
 }
 
-.searchInput::placeholder {
+.filterHeader h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.closeButton {
+    background: none;
+    border: none;
+    cursor: pointer;
     color: var(--muted-foreground);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem;
+    border-radius: 50%;
 }
+
+.closeButton:hover {
+    background-color: var(--secondary);
+}
+
+.resetButton {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    color: var(--primary);
+}
+
+.filterSection {
+    margin-bottom: 1rem;
+}
+
+.filterTitle {
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: var(--foreground);
+}
+
+.filterOptions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.filterOption {
+    padding: 0.5rem 0.75rem;
+    background-color: var(--secondary);
+    border-radius: var(--radius);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.filterOption:hover {
+    background-color: var(--accent);
+}
+
+.filterOption.selected {
+    background-color: var(--primary);
+    color: white;
+}
+
+/* Для мобильных устройств */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filterPopover {
+        width: 100%;
+        position: fixed;
+        top: auto;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        border-radius: var(--radius) var(--radius) 0 0;
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+}
+
+
 

@@ -13,11 +13,21 @@ export const LotsPage = observer(() => {
 	const [sortBy, setSortBy] = useState('id')
 	const [isDescending, setIsDescending] = useState(false)
 	const [searchQuery, setSearchQuery] = useState('')
+	const [selectedOilType, setSelectedOilType] = useState<string | undefined>(undefined)
+	const [selectedPumpName, setSelectedPumpName] = useState<string | undefined>(undefined)
 	const PAGE_SIZE = 6
 
 	useEffect(() => {
-		store.getLots(currentPage, PAGE_SIZE, sortBy, isDescending, searchQuery)
-	}, [currentPage, sortBy, isDescending, searchQuery])
+		store.getLots(
+			currentPage, 
+			PAGE_SIZE, 
+			sortBy, 
+			isDescending, 
+			searchQuery,
+			selectedOilType,
+			selectedPumpName
+		)
+	}, [currentPage, sortBy, isDescending, searchQuery, selectedOilType, selectedPumpName])
 
 	const handleNextPage = () => {
 		if (store.pagination.has_next) {
@@ -46,6 +56,16 @@ export const LotsPage = observer(() => {
 		setCurrentPage(1)
 	}
 
+	const handleOilTypeChange = (oilType: string | undefined) => {
+		setSelectedOilType(oilType)
+		setCurrentPage(1)
+	}
+
+	const handlePumpNameChange = (pumpName: string | undefined) => {
+		setSelectedPumpName(pumpName)
+		setCurrentPage(1)
+	}
+
 	return (
 		<div>
 			<h1 style={{margin: "16px 0"}}>Лоты</h1>
@@ -57,6 +77,11 @@ export const LotsPage = observer(() => {
 						onSortChange={handleSortChange}
 						onDirectionChange={handleDirectionChange}
 						onSearch={handleSearch}
+						selectedOilType={selectedOilType}
+						onOilTypeChange={handleOilTypeChange}
+						selectedPumpName={selectedPumpName}
+						onPumpNameChange={handlePumpNameChange}
+						pumpNames={store.pumpNames}
 					/>
 					<Grid>
 						{store.lots?.map((lot) => (

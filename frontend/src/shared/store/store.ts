@@ -13,7 +13,7 @@ class Store {
 	
 	lots: INewLot[] = []
 	activeLot: INewLot | null = null
-	
+	pumpNames: Array<string> = []
 
 	pagination: {
 		total_pages: number;
@@ -33,8 +33,9 @@ class Store {
 		makeAutoObservable(this);
 		this.getMe();
 		if (this.user) { 
-			this.getLots(1, 20);
-		}
+			this.getLots(1, 6);
+		}	
+		this.getPumpNames();
 	}
 
 	async login(email: string, password: string) {
@@ -62,9 +63,62 @@ class Store {
 		page_size: number, 
 		sort_by?: string,
 		sort_desc?: boolean,
+		search?: string,
+		oil_type?: string,
+		oil_pump_name?: string
+	) {
+		try {
+			let response;
+			
+			if (this.user?.role === "admin") {
+				// Для админа используем обычный эндпоинт /lots
+				response = await LotsService.getLots(
+					page_number, 
+					page_size, 
+					sort_by,
+					sort_desc,
+					"Подтвержден", // status
+					oil_type as "АИ-92" | "АИ-95" | "АИ-92 Экто" | "АИ-95 Экто" | "ДТ" | undefined, // oil_type
+					undefined, // min_price
+					undefined, // max_price
+					oil_pump_name, // oil_pump_name
+					undefined, // region
+					undefined, // available_weight_min
+					search
+				);
+			} else {
+				// Для обычных пользователей используем эндпоинт /lots/active
+				response = await LotsService.getActiveLots(
+					page_number, 
+					page_size, 
+					sort_by,
+					sort_desc,
+					oil_type as "АИ-92" | "АИ-95" | "АИ-92 Экто" | "АИ-95 Экто" | "ДТ" | undefined, // oil_type
+					undefined, // min_price
+					undefined, // max_price
+					undefined, // region
+					undefined, // available_weight_min
+					oil_pump_name, // oil_pump_name
+					search
+				);
+			}
+			
+			this.lots = response.data.items as unknown as INewLot[];
+			this.pagination = response.data.pagination;
+		} catch (error) {
+			console.error('Error fetching lots:', error);
+		}
+	}
+
+	async getAdminLots(
+		page_number: number, 
+		page_size: number, 
+		sort_by?: string,
+		sort_desc?: boolean,
 		search?: string
 	) {
 		try {
+			// Для админ-панели всегда используем обычный эндпоинт /lots
 			const response = await LotsService.getLots(
 				page_number, 
 				page_size, 
@@ -76,6 +130,7 @@ class Store {
 				undefined, // max_price
 				undefined, // region
 				undefined, // available_weight_min
+				undefined, // oil_pump_name
 				search
 			);
 			this.lots = response.data.items as unknown as INewLot[];
@@ -91,7 +146,7 @@ class Store {
 
 	async uploadCSV(file: File) {
 		await LotsService.uploadCSV(file);
-		await this.getLots(1, 20); 
+		await this.getLots(1, 6);
 	}
 
 	setActiveLot(lot: INewLot | null) {
@@ -109,6 +164,11 @@ class Store {
 
 	removeFromCart(lotId: number) {
 		this.cart = this.cart.filter(item => item.lot_id !== lotId);
+	}
+
+	async getPumpNames() {
+		const response = await LotsService.getPumpNames();
+		this.pumpNames = response.data;
 	}
 
 	get cartTotalPrice() {

@@ -1,6 +1,6 @@
-import { useState, useCallback } from "react"
+import { useState, useCallback, useRef, useEffect } from "react"
 import { Button } from 'shared/ui/button';
-import { HiTag, HiScale, HiCalendar, HiSearch } from "react-icons/hi";
+import { HiTag, HiScale, HiCalendar, HiSearch, HiFilter, HiX } from "react-icons/hi";
 import { HiArrowUp, HiArrowDown } from "react-icons/hi";
 import styles from './LotsSorting.module.css';
 import { debounce } from "shared/lib/debounce";
@@ -29,12 +29,25 @@ const sortOptions: SortOption[] = [
 	},
 ];
 
+const oilTypes = [
+	"АИ-92", 
+	"АИ-95", 
+	"АИ-92 Экто", 
+	"АИ-95 Экто", 
+	"ДТ"
+];
+
 interface LotsSortingProps {
 	currentSort: string;
 	isDescending: boolean;
 	onSortChange: (sort: string) => void;
 	onDirectionChange: () => void;
 	onSearch: (query: string) => void;
+	selectedOilType?: string;
+	onOilTypeChange: (oilType: string | undefined) => void;
+	selectedPumpName?: string;
+	onPumpNameChange: (pumpName: string | undefined) => void;
+	pumpNames: string[];
 }
 
 export const LotsSorting = ({
@@ -42,9 +55,16 @@ export const LotsSorting = ({
 	isDescending,
 	onSortChange,
 	onDirectionChange,
-	onSearch
+	onSearch,
+	selectedOilType,
+	onOilTypeChange,
+	selectedPumpName,
+	onPumpNameChange,
+	pumpNames
 }: LotsSortingProps) => {
 	const [searchQuery, setSearchQuery] = useState<string>("")
+	const [isFilterOpen, setIsFilterOpen] = useState(false);
+	const filterRef = useRef<HTMLDivElement>(null);
 	
 	// Создаем стабильную функцию дебаунса с useCallback
 	const debouncedSearch = useCallback(
@@ -59,6 +79,46 @@ export const LotsSorting = ({
 		const value = e.target.value;
 		setSearchQuery(value);
 		debouncedSearch(value);
+	};
+
+	const handleOilTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		const value = e.target.value;
+		onOilTypeChange(value === "" ? undefined : value);
+	};
+
+	const handlePumpNameChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		const value = e.target.value;
+		onPumpNameChange(value === "" ? undefined : value);
+	};
+
+	// Закрытие поповера при клике вне его
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
+				setIsFilterOpen(false);
+			}
+		};
+
+		document.addEventListener('mousedown', handleClickOutside);
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside);
+		};
+	}, []);
+
+	// Функция для выбора типа топлива напрямую
+	const handleSelectOilType = (type: string | undefined) => {
+		onOilTypeChange(type);
+	};
+
+	// Функция для выбора нефтебазы напрямую
+	const handleSelectPumpName = (name: string | undefined) => {
+		onPumpNameChange(name);
+	};
+
+	// Функция для сброса фильтров
+	const handleResetFilters = () => {
+		onOilTypeChange(undefined);
+		onPumpNameChange(undefined);
 	};
 
 	return (
@@ -76,6 +136,88 @@ export const LotsSorting = ({
 					</Button>
 				))}
 			</div>
+			
+			<div className={styles.filterContainer} ref={filterRef}>
+				<Button 
+					variant="outline" 
+					className={styles.filterButton}
+					onClick={() => setIsFilterOpen(!isFilterOpen)}
+				>
+					<HiFilter className={styles.buttonIcon} />
+					Фильтры
+					{(selectedOilType || selectedPumpName) && (
+						<span className={styles.filterBadge}>
+							{(selectedOilType && selectedPumpName) ? '2' : '1'}
+						</span>
+					)}
+				</Button>
+				
+				{isFilterOpen && (
+					<div className={styles.filterPopover}>
+						<div className={styles.filterHeader}>
+							<h3>Фильтры</h3>
+							{(selectedOilType || selectedPumpName) && (
+								<Button 
+									variant="outline" 
+									className={styles.resetButton}
+									onClick={handleResetFilters}
+								>
+									Сбросить
+								</Button>
+							)}
+							<button 
+								className={styles.closeButton}
+								onClick={() => setIsFilterOpen(false)}
+							>
+								<HiX />
+							</button>
+						</div>
+						
+						<div className={styles.filterSection}>
+							<h4 className={styles.filterTitle}>Тип топлива</h4>
+							<div className={styles.filterOptions}>
+								<div 
+									className={`${styles.filterOption} ${!selectedOilType ? styles.selected : ''}`}
+									onClick={() => handleSelectOilType(undefined)}
+								>
+									Все типы
+								</div>
+								{oilTypes.map(type => (
+									<div 
+										key={type} 
+										className={`${styles.filterOption} ${selectedOilType === type ? styles.selected : ''}`}
+										onClick={() => handleSelectOilType(type)}
+									>
+										{type}
+									</div>
+								))}
+							</div>
+						</div>
+						
+						<div className={styles.filterSection}>
+							<h4 className={styles.filterTitle}>Нефтебаза</h4>
+							<div className={styles.filterOptions}>
+								<div 
+									className={`${styles.filterOption} ${!selectedPumpName ? styles.selected : ''}`}
+									onClick={() => handleSelectPumpName(undefined)}
+								>
+									Все нефтебазы
+								</div>
+								{pumpNames.map(name => (
+									<div 
+										key={name} 
+										className={`${styles.filterOption} ${selectedPumpName === name ? styles.selected : ''}`}
+										onClick={() => handleSelectPumpName(name)}
+									>
+										{name}
+									</div>
+								))}
+							</div>
+						</div>
+					</div>
+				)}
+			</div>
+			
 			<div className={styles.formGroup}>
 				<div className={styles.searchInputWrapper}>
 					<HiSearch className={styles.searchIcon} />

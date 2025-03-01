@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 from fastapi import APIRouter, Query
 from starlette import status
 
@@ -12,7 +12,7 @@ from dependencies import OilPumpServiceDep
 
 router = APIRouter(
     prefix="/oil-pumps",
-    tags=["oil_pumps"]
+    tags=["oil pumps"]
 )
 
 @router.post("/", response_model=OilPumpRead, status_code=status.HTTP_201_CREATED)
@@ -36,6 +36,13 @@ async def get_oil_pumps(
         sort_by=sort_by,
         sort_desc=sort_desc
     )
+
+
+@router.get("/names", response_model=List[str])
+async def get_unique_names(
+    service: OilPumpServiceDep
+) -> List[str]:
+    return service.get_all_unique_names()
 
 @router.get("/{pump_id}", response_model=OilPumpRead)
 async def get_oil_pump(

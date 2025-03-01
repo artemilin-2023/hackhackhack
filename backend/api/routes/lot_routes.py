@@ -45,6 +45,7 @@ async def get_lots(
     min_price: Optional[float] = Query(None, description="Минимальная цена"),
     max_price: Optional[float] = Query(None, description="Максимальная цена"),
     region: Optional[str] = Query(None, description="Фильтр по региону"),
+    oil_pump_name: Optional[str] = Query(None, description="Фильтр по названию нефтебазы"),
     available_weight_min: Optional[int] = Query(None, description="Минимальный доступный вес")
 ) -> PaginatedLots:
     filters = LotFilter(
@@ -53,6 +54,7 @@ async def get_lots(
         min_price=min_price,
         max_price=max_price,
         region=region,
+        oil_pump_name=oil_pump_name,
         available_weight_min=available_weight_min,
         search=search
     )
@@ -77,6 +79,7 @@ async def get_active_lots(
     min_price: Optional[float] = Query(None, description="Минимальная цена"),
     max_price: Optional[float] = Query(None, description="Максимальная цена"),
     region: Optional[str] = Query(None, description="Фильтр по региону"),
+    oil_pump_name: Optional[str] = Query(None, description="Фильтр по названию нефтебазы"),
     available_weight_min: Optional[int] = Query(None, description="Минимальный доступный вес")
 ) -> PaginatedLots:
     filters = PublicLotFilter(
@@ -84,7 +87,8 @@ async def get_active_lots(
         min_price=min_price,
         max_price=max_price,
         region=region,
-            available_weight_min=available_weight_min,
+        oil_pump_name=oil_pump_name,
+        available_weight_min=available_weight_min,
         search=search
     )
     return service.get_active_lots(

@@ -1,5 +1,5 @@
 import math
-from typing import Optional
+from typing import List
 from fastapi import HTTPException
 from starlette import status
 
@@ -51,6 +51,9 @@ class OilPumpService:
             items=pumps,
             pagination=pagination
         )
+    
+    def get_all_unique_names(self) -> List[str]:
+        return self._repository.get_all_unique_names()
 
     def get_oil_pump_by_id(self, pump_id: int) -> OilPump:
         pump = self._repository.get_by_id(pump_id)

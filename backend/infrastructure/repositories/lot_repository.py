@@ -48,6 +48,8 @@ class LotRepository:
                 query = query.where(Lot.price_per_ton <= filters["max_price"])
             if "region" in filters:
                 query = query.join(OilPump, isouter=True).where(OilPump.region == filters["region"])
+            if "oil_pump_name" in filters:
+                query = query.join(OilPump, isouter=True).where(OilPump.name == filters["oil_pump_name"])
             if "available_weight_min" in filters:
                 query = query.where(Lot.available_weight >= filters["available_weight_min"])
 

@@ -16,6 +16,7 @@ from api.routes import user_routes, lot_routes, oil_pump_routes
 from dependencies import get_static_user_service
 from domain.user import Role
 from infrastructure.database import on_start_up
+from common.logger import log
 
 
 # =============================
@@ -61,7 +62,7 @@ restricted_routes = {
         "required_roles": [Role.admin]
     },
     r"^\/oil-pumps.*$": {
-        "methods": ["POST", "DELETE", "PATCH", "GET"],
+        "methods": ["POST", "DELETE", "PATCH"],
         "required_roles": [Role.admin]
     },
     # любой маршрут, кроме /login, /register, /docs, требует наличия авторизации.
@@ -89,7 +90,8 @@ async def role_middleware(request: Request, call_next):
             status_code=ex.status_code,
             content={'detail': ex.detail}
         )
-    except Exception:
+    except Exception as ex:
+        log.error(f"Error in role middleware: {ex}")
         return JSONResponse(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             content={'detail': "internal server error"}

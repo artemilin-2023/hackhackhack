@@ -44,6 +44,7 @@ class PublicLotFilter(BaseModel):
     min_price: Optional[float] = None
     max_price: Optional[float] = None
     region: Optional[str] = None
+    oil_pump_name: Optional[str] = None
     search: Optional[str] = None
     available_weight_min: Optional[int] = None
 

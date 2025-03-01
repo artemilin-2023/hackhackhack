@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(message)s")
 FTP_USER = config("FTP_USER", default="username")
 FTP_PASSWORD = config("FTP_PASSWORD", default="password")
 FTP_PORT = config("FTP_PORT", default=21, cast=int)
-FTP_DIR = config("FTP_DIR", default=os.path.join(os.getcwd(), "files"))
+FTP_DIR = config("FTP_DIR", default=os.path.join("app", "files"))
 PASV_MIN_PORT = config("PASV_MIN_PORT", default=60000, cast=int)
 PASV_MAX_PORT = config("PASV_MAX_PORT", default=60100, cast=int)
 

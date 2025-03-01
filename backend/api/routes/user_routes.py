@@ -1,6 +1,6 @@
 from typing import Sequence
 
-from fastapi import APIRouter, HTTPException, Form
+from fastapi import APIRouter, HTTPException
 from pydantic import EmailStr
 from starlette.requests import Request
 from starlette.responses import Response, JSONResponse

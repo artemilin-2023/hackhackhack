@@ -1,34 +1,37 @@
-from typing import Optional
+from typing import List
 from pydantic import BaseModel
 from datetime import datetime
 
+from domain.order import Order, OrderStatus
+from api.requests.lot_models import Pagination
+
 
 class OrderCreate(BaseModel):
-    buyer_id: int
     seller_id: int
     lot_id: int
     quantity: float
     price_per_unit: float
 
 
-class OrderUpdate(BaseModel):
-    status: Optional[str]
-    quantity: Optional[str]
-    price_per_unit: Optional[str]
-    status: Optional[str]
-
+class OrderUpdateStatus(BaseModel):
+    status: OrderStatus
 
 class OrderRead(BaseModel):
     id: int
-    buyer_id: int
+    customer_id: int
     seller_id: int
     lot_id: int
     quantity: float
     price_per_unit: float
     total_price: float
-    status: str
+    status: OrderStatus
     created_at: datetime
     updated_at: datetime
 
     class Config:
         orm_mode = True
+
+
+class PaginatedOrders(BaseModel):
+    orders: List[Order]
+    pagination: Pagination

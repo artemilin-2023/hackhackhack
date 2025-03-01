@@ -1,52 +1,84 @@
 from typing import Optional
-
-from fastapi import APIRouter, HTTPException, Form
+from fastapi import APIRouter, Query
 from starlette import status
-from starlette.requests import Request
-from starlette.responses import JSONResponse
 
+from api.requests.lot_models import (
+    LotCreate,
+    LotRead,
+    PaginatedLots,
+    LotUpdate,
+    LotFilter
+)
 from dependencies import LotServiceDep
-
-from api.requests.lot_models import LotCreate, LotRead, PaginatedLots, LotUpdate
+from domain.lot import LotStatus, OilType
 
 router = APIRouter(
-    tags=["lots"],
-    prefix="/lots"
+    prefix="/lots",
+    tags=["lots"]
 )
 
-
-@router.post("/", response_model=LotRead)
-async def create_lot(service: LotServiceDep, r: Request,
-                     title: str = Form(),
-                     description: str = Form(),
-                     price: float = Form()):
-    request = LotCreate(title=title, description=description, price=price)
-    return service.create_lot(request, r)
-
+@router.post("/", response_model=LotRead, status_code=status.HTTP_201_CREATED)
+async def create_lot(
+    lot_data: LotCreate,
+    service: LotServiceDep
+) -> LotRead:
+    return service.create_lot(lot_data)
 
 @router.get("/", response_model=PaginatedLots)
-async def get_many_lots(service: LotServiceDep, page_number: int = 1, page_size: int = 10):
-    if page_number < 1 or page_size > 100:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail="Page number must be great then 1 and page size must be lowest then 100.")
+async def get_lots(
+    service: LotServiceDep,
+    page: int = Query(1, ge=1, description="Номер страницы"),
+    size: int = Query(10, ge=1, le=100, description="Размер страницы"),
+    sort_by: str = Query("id", description="Поле для сортировки"),
+    sort_desc: bool = Query(False, description="Сортировка по убыванию"),
+    status: Optional[LotStatus] = Query(None, description="Фильтр по статусу"),
+    oil_type: Optional[OilType] = Query(None, description="Фильтр по типу топлива"),
+    min_price: Optional[float] = Query(None, description="Минимальная цена"),
+    max_price: Optional[float] = Query(None, description="Максимальная цена"),
+    region: Optional[str] = Query(None, description="Фильтр по региону"),
+    available_weight_min: Optional[int] = Query(None, description="Минимальный доступный вес")
+) -> PaginatedLots:
+    filters = LotFilter(
+        status=status,
+        oil_type=oil_type,
+        min_price=min_price,
+        max_price=max_price,
+        region=region,
+        available_weight_min=available_weight_min
+    )
+    
+    return service.get_lots(
+        page=page,
+        size=size,
+        filters=filters,
+        sort_by=sort_by,
+        sort_desc=sort_desc
+    )
 
-    return service.get_all_lots(page_number, page_size)
+@router.get("/active", response_model=list[LotRead])
+async def get_active_lots(
+    service: LotServiceDep
+) -> list[LotRead]:
+    return service.get_active_lots()
 
+@router.get("/{lot_id}", response_model=LotRead)
+async def get_lot(
+    lot_id: int,
+    service: LotServiceDep
+) -> LotRead:
+    return service.get_lot_by_id(lot_id)
 
-@router.get("/{id}", response_model=LotRead)
-async def get_by_id(id: int, service: LotServiceDep):
-    return service.get_lot_by_id(id)
+@router.patch("/{lot_id}", response_model=LotRead)
+async def update_lot(
+    lot_id: int,
+    lot_data: LotUpdate,
+    service: LotServiceDep
+) -> LotRead:
+    return service.update_lot(lot_id, lot_data)
 
-
-@router.delete("/{id}")
-async def delete(id: int, service: LotServiceDep):
-    return service.delete_lot(id)
-
-
-@router.patch("/{id}")
-async def update(id: int, service: LotServiceDep,
-                 title: Optional[str] = Form(None),
-                 description: Optional[str] = Form(None),
-                 price: Optional[float] = Form(None)):
-    request = LotUpdate(title=title, description=description, price=price)
-    return service.update_lot(id, request)
+@router.delete("/{lot_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_lot(
+    lot_id: int,
+    service: LotServiceDep
+):
+    service.delete_lot(lot_id)

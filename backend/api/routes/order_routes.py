@@ -1,52 +1,63 @@
-from typing import List
-from fastapi import APIRouter
+# from typing import List
+# from fastapi import APIRouter, Depends
+# from starlette.requests import Request
 
-from api.requests.order_models import OrderCreate, OrderRead, OrderUpdate
-from dependencies import OrderServiceDep
+# from api.requests.order_models import OrderCreate, OrderRead, OrderUpdate, PaginatedOrders
+# from application.services.order_service import OrderService
+# from dependencies import get_order_service
 
-router = APIRouter(
-    tags=["orders"],
-    prefix="/orders"
-)
-
-
-@router.post("/", response_model=OrderRead)
-async def create_order(
-    order: OrderCreate,
-    order_service: OrderServiceDep
-):
-    return order_service.create_order(order)
+# router = APIRouter(
+#     tags=["orders"],
+#     prefix="/orders"
+# )
 
 
-@router.get("/{order_id}", response_model=OrderRead)
-async def get_order(
-    order_id: int,
-    order_service: OrderServiceDep
-):
-    return order_service.get_order(order_id)
+# @router.post("/", response_model=OrderRead)
+# async def create_order(
+#     order: OrderCreate, request: Request,
+#     order_service: OrderService = Depends(get_order_service)
+# ):
+#     return order_service.create_order(order, request)
 
 
-@router.get("/", response_model=List[OrderRead])
-async def list_orders(
-    order_service: OrderServiceDep,
-    skip: int = 0,
-    limit: int = 100
-):
-    return order_service.list_orders(skip=skip, limit=limit)
+# @router.get("/{order_id}", response_model=OrderRead)
+# async def get_order(
+#     order_id: int,
+#     order_service: OrderService = Depends(get_order_service)
+# ):
+#     return order_service.get_order(order_id)
 
 
-@router.put("/{order_id}", response_model=OrderRead)
-async def update_order(
-    order_id: int,
-    order: OrderUpdate,
-    order_service: OrderServiceDep
-):
-    return order_service.update_order(order_id, order)
+# @router.get("/", response_model=PaginatedOrders)
+# async def get_all_orders(
+#     page: int = 1,
+#     page_size: int = 10,
+#     order_service: OrderService = Depends(get_order_service)
+# ):
+#     return order_service.get_all_orders(page, page_size)
 
 
-@router.delete("/{order_id}", response_model=OrderRead)
-async def delete_order(
-    order_id: int,
-    order_service: OrderServiceDep
-):
-    return order_service.delete_order(order_id)
+# @router.get("/my")
+# async def get_my_orders(
+#     request: Request,
+#     order_service: OrderService = Depends(get_order_service)
+# ):
+#     return order_service.get_orders_by_user(request)
+
+
+# @router.patch("/{order_id}", response_model=OrderRead)
+# async def update_order_status(
+#     order_id: int,
+#     order_update: OrderUpdate,
+#     order_service: OrderService = Depends(get_order_service)
+# ):
+#     return order_service.update_order_status(order_id, order_update)
+
+
+# @router.delete("/{order_id}", response_model=OrderRead)
+# async def delete_order(
+#     order_id: int,
+#     request: Request,
+#     order_service: OrderService = Depends(get_order_service)
+# ):
+#     return order_service.delete_order(order_id, request)

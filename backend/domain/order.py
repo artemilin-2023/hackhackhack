@@ -1,23 +1,21 @@
 from enum import Enum
-from sqlmodel import SQLModel, Field, Relationship
-from datetime import datetime
+from sqlmodel import SQLModel, Field
+from datetime import date
+from typing import Optional
 
 
 class OrderStatus(str, Enum):
-    pending = "pending"
-    confirmed = "confirmed"
-    canceled = "canceled"
-    completed = "completed"
+    PENDING = "Ожидание"
+    COMPLETED = "Выполнен"
+    CANCELED = "Отменен"
+
 
 
 class Order(SQLModel, table=True):
-    id: int = Field(default=None, primary_key=True)
-    customer_id: int = Field(foreign_key="user.id")
-    seller_id: int = Field(foreign_key="user.id")
+    id: Optional[int] = Field(default=None, primary_key=True)
+    order_date: date = Field(default_factory=date.today)
     lot_id: int = Field(foreign_key="lot.id")
-    quantity: float
-    price_per_unit: float
-    total_price: float
-    status: OrderStatus = Field(default=OrderStatus.pending)
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    volume: float
+    delivery_type: str
+    customer_id: int = Field(foreign_key="user.id")
+    status: OrderStatus = Field(default=OrderStatus.PENDING)

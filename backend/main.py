@@ -12,12 +12,11 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.routes import user_routes, lot_routes
+from api.routes import user_routes, lot_routes, oil_pump_routes
 from dependencies import get_static_uibanskie_pythonskie_dependence_injection_user_service
 from domain.user import Role
 from infrastructure.database import on_start_up
 
-# Загружаем переменные окружения из .env файла
 load_dotenv()
 
 def get_cors_origins() -> List[str]:
@@ -42,17 +41,23 @@ app.add_middleware(
 
 app.include_router(user_routes.router)
 app.include_router(lot_routes.router)
+app.include_router(oil_pump_routes.router)
+# app.include_router(order_routes.router)
 
 restricted_routes = {
     # любой маршрут, начинающийся с /lots
     r"^\/lots.*$": {
         "methods": ["POST", "DELETE", "PATCH"],
-        "required_roles": [Role.seller, Role.admin]
+        "required_roles": [Role.admin]
+    },
+    r"^\/oil-pumps.*$": {
+        "methods": ["POST", "DELETE", "PATCH", "GET"],
+        "required_roles": [Role.admin]
     },
     # любой маршрут, кроме /login, /register, /docs, требует наличия авторизации.
     r"^(?!\/(?:login|register|docs|openapi.json)$).*$": {
         "methods": ["POST", "DELETE", "GET", "PATCH", "PUT"],
-        "required_roles": [Role.seller, Role.admin, Role.customer]
+        "required_roles": [Role.admin, Role.customer]
     }
 }
 
@@ -83,6 +88,6 @@ async def role_middleware(request: Request, call_next):
     return await call_next(request)
 
 
+# for debugging
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
-

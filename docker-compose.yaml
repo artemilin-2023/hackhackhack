@@ -9,6 +9,8 @@ services:
       - 8000:8000
     environment:
       - LOG_LEVEL=DEBUG
+      - ADMIN_EMAIL=admin@gmail.com
+      - ADMIN_PASSWORD=asdf
       - DATABASE_CONNECTION_STRING=postgresql://postgres:password@postgres:5432
       - JWT_VARY_SECRET_HASH_IN_PUBLIC_REPO=1965d3ece323947d9a778a9341cc68828e708842dc8f809750fcf9985f27d67e
       - JWT_ALGORITHM=HS256

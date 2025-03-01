@@ -27,4 +27,61 @@
 .buttonIcon {
     width: 1.25rem;
     height: 1.25rem;
-} 
+}
+
+.searchInputWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.searchIcon {
+    position: absolute;
+    left: 0.75rem;
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--muted-foreground);
+}
+
+.formGroup input {
+    padding: 0.75rem;
+    padding-left: 2.5rem;
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--foreground);
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    width: 400px;
+}
+
+.formGroup input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.formGroup input::placeholder {
+    color: var(--muted-foreground);
+}
+
+.searchInput {
+    padding: 0.75rem;
+    padding-left: 2.5rem;
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--foreground);
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    width: 400px;
+}
+
+.searchInput:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.searchInput::placeholder {
+    color: var(--muted-foreground);
+}
+

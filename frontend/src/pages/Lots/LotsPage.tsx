@@ -12,11 +12,12 @@ export const LotsPage = observer(() => {
 	const [currentPage, setCurrentPage] = useState(1)
 	const [sortBy, setSortBy] = useState('id')
 	const [isDescending, setIsDescending] = useState(false)
+	const [searchQuery, setSearchQuery] = useState('')
 	const PAGE_SIZE = 6
 
 	useEffect(() => {
-		store.getLots(currentPage, PAGE_SIZE, sortBy, isDescending)
-	}, [currentPage, sortBy, isDescending])
+		store.getLots(currentPage, PAGE_SIZE, sortBy, isDescending, searchQuery)
+	}, [currentPage, sortBy, isDescending, searchQuery])
 
 	const handleNextPage = () => {
 		if (store.pagination.has_next) {
@@ -39,6 +40,11 @@ export const LotsPage = observer(() => {
 		setIsDescending(prev => !prev)
 		setCurrentPage(1)
 	}
+	
+	const handleSearch = (query: string) => {
+		setSearchQuery(query)
+		setCurrentPage(1)
+	}
 
 	return (
 		<div>
@@ -50,6 +56,7 @@ export const LotsPage = observer(() => {
 						isDescending={isDescending}
 						onSortChange={handleSortChange}
 						onDirectionChange={handleDirectionChange}
+						onSearch={handleSearch}
 					/>
 					<Grid>
 						{store.lots?.map((lot) => (

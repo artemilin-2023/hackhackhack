@@ -50,7 +50,7 @@ export const Header = observer(() => {
 							Личный кабинет
 						</NavLink>
 					)}
-					{store.user && store.user?.role !== "admin" && (
+					{store.user && store.user?.role === "admin" && (
 
 						<NavLink
 							to="/admin"

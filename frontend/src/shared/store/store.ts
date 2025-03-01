@@ -115,7 +115,9 @@ class Store {
 		page_size: number, 
 		sort_by?: string,
 		sort_desc?: boolean,
-		search?: string
+		search?: string,
+		oil_type?: string,
+		oil_pump_name?: string
 	) {
 		try {
 			// Для админ-панели всегда используем обычный эндпоинт /lots
@@ -125,12 +127,12 @@ class Store {
 				sort_by,
 				sort_desc,
 				undefined, // status
-				undefined, // oil_type
+				oil_type as "АИ-92" | "АИ-95" | "АИ-92 Экто" | "АИ-95 Экто" | "ДТ" | undefined, // oil_type
 				undefined, // min_price
 				undefined, // max_price
+				oil_pump_name, // oil_pump_name
 				undefined, // region
 				undefined, // available_weight_min
-				undefined, // oil_pump_name
 				search
 			);
 			this.lots = response.data.items as unknown as INewLot[];

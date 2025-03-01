@@ -66,7 +66,6 @@ export const LotsSorting = ({
 	const [isFilterOpen, setIsFilterOpen] = useState(false);
 	const filterRef = useRef<HTMLDivElement>(null);
 	
-	// Создаем стабильную функцию дебаунса с useCallback
 	const debouncedSearch = useCallback(
 		debounce((query: string) => {
 			onSearch(query);
@@ -74,24 +73,14 @@ export const LotsSorting = ({
 		[onSearch]
 	);
 	
-	// Обработчик изменения поля ввода
+
 	const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const value = e.target.value;
 		setSearchQuery(value);
 		debouncedSearch(value);
 	};
 
-	const handleOilTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		const value = e.target.value;
-		onOilTypeChange(value === "" ? undefined : value);
-	};
 
-	const handlePumpNameChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		const value = e.target.value;
-		onPumpNameChange(value === "" ? undefined : value);
-	};
-
-	// Закрытие поповера при клике вне его
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
 			if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
@@ -105,17 +94,14 @@ export const LotsSorting = ({
 		};
 	}, []);
 
-	// Функция для выбора типа топлива напрямую
 	const handleSelectOilType = (type: string | undefined) => {
 		onOilTypeChange(type);
 	};
 
-	// Функция для выбора нефтебазы напрямую
 	const handleSelectPumpName = (name: string | undefined) => {
 		onPumpNameChange(name);
 	};
 
-	// Функция для сброса фильтров
 	const handleResetFilters = () => {
 		onOilTypeChange(undefined);
 		onPumpNameChange(undefined);

@@ -2,7 +2,6 @@ import csv
 from datetime import datetime
 from io import StringIO
 import math
-import pandas as pd
 
 from typing import Optional
 
@@ -12,7 +11,6 @@ from starlette import status
 
 from api.models.oil_pump_models import OilPumpCreate
 from application.services.oil_pump_service import OilPumpService
-from application.services.user_services import UserService
 from domain.lot import Lot, LotStatus, OilType
 from infrastructure.repositories.lot_repository import LotRepository
 from api.models.lot_models import (
@@ -64,6 +62,9 @@ class LotService:
         csv_content = StringIO(content.decode('utf-8'))
         csv_reader = csv.DictReader(csv_content)
 
+        return self._upload_from_csv(csv_reader)
+
+    def _upload_from_csv(self, csv_reader: csv.DictReader):
         created_lots = []
         errors = []
 

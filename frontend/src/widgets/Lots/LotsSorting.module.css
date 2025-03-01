@@ -1,0 +1,30 @@
+.container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.sortButtons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.sortButton {
+    min-width: 120px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.directionButton {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.buttonIcon {
+    width: 1.25rem;
+    height: 1.25rem;
+} 

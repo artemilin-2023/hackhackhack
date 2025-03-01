@@ -33,7 +33,7 @@ ul, ol {
   --popover: #141414;
   --popover-foreground: #FAFAFA;
   
-  --primary: #ed3aa5;
+  --primary: #ed3a3a;
   --primary-foreground: #FAFAFA;
   
   --secondary: #2D2D2D;
@@ -50,7 +50,7 @@ ul, ol {
   
   --border: #262626;
   --input: #262626;
-  --ring: #ed3aa5;
+  --ring: #ed3a3a;
 
   --radius: 0.5rem;
 }
@@ -71,7 +71,6 @@ body {
 main {
   margin: 0 auto;
   max-width: 1200px;
-  padding: 0 1rem;
 }
 
 /* Prevent text selection on interactive elements */
@@ -105,4 +104,10 @@ img {
   max-width: 100%;
   height: auto;
   display: block;
+}
+
+@media screen and (max-width: 1215px) {
+	main {
+		padding: 0 1rem;
+	}
 }

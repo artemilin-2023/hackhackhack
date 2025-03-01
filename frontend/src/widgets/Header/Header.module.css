@@ -28,6 +28,12 @@
   gap: 1rem;
 }
 
+
+.NavLink {
+    position: relative;
+    padding-bottom: 4px;
+}
+
 .authButton {
   /* background-color: var(--primary); */
   border: 1px solid var(--primary);
@@ -35,8 +41,19 @@
   padding: 0.5rem 1rem;
   border-radius: 0.25rem;
   text-decoration: none;
+  display: flex;
+  align-items: center;
 }
 
 .authButton:hover {
   background-color: var(--primary-hover);
+}
+.NavLink.active::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--primary);
 }

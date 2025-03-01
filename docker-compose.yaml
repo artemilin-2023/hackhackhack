@@ -17,9 +17,11 @@ services:
       - CORS_ALLOW_CREDENTIALS=true
       - CORS_ALLOW_METHODS=*
       - CORS_ALLOW_HEADERS=*
-    postgres:
+    depends_on:
+      postgres:
         condition: service_healthy
         restart: true
+
 
   postgres:
     image: postgres

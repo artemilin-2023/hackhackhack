@@ -3,3 +3,26 @@
 	flex-wrap: nowrap;
 	gap: 16px;
 }
+
+.adminContent {
+	margin-top: 2rem;
+}
+
+.title {
+	margin: 16px 0;
+}
+
+.pagination {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 1rem;
+	margin-top: 2rem;
+	padding: 1rem;
+}
+
+.pagination span {
+	color: var(--muted-foreground);
+	min-width: 150px;
+	text-align: center;
+}

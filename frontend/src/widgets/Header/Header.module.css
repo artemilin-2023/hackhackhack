@@ -1,0 +1,42 @@
+.HeaderWrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: var(--background);
+    border-bottom: 1px solid var(--border);
+}
+
+.Header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.Logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--primary);
+}
+
+.Nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.authButton {
+  /* background-color: var(--primary); */
+  border: 1px solid var(--primary);
+  color: var(--primary-foreground);
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  text-decoration: none;
+}
+
+.authButton:hover {
+  background-color: var(--primary-hover);
+}

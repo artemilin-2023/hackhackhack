@@ -1,0 +1,183 @@
+
+.container {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+.header {
+  text-align: center;
+}
+
+.title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.subtitle {
+  margin-top: 1rem;
+  font-size: 1.125rem;
+  color: var(--muted-foreground);
+}
+
+.features {
+  margin-top: 4rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+.featureCard {
+  padding: 1.5rem;
+  background-color: var(--card);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.featureTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.featureDescription {
+  margin-top: 0.5rem;
+  color: var(--muted-foreground);
+}
+
+/* Existing styles remain unchanged */
+
+.howItWorks {
+  margin-top: 4rem;
+  text-align: center;
+}
+
+.sectionTitle {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: var(--foreground);
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.step {
+  padding: 2rem;
+  background: var(--card);
+  border-radius: var(--radius);
+  position: relative;
+}
+
+.stepNumber {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+}
+
+.stepTitle {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.stepDescription {
+  color: var(--muted-foreground);
+}
+
+.categories {
+  margin-top: 4rem;
+  text-align: center;
+}
+
+.categoryGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.categoryCard {
+  padding: 2rem;
+  background: var(--card);
+  border-radius: var(--radius);
+  transition: transform 0.2s ease;
+}
+
+.categoryCard:hover {
+  transform: translateY(-4px);
+}
+
+.categoryCard h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.categoryCard p {
+  color: var(--muted-foreground);
+}
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-top: 2rem;
+  /* max-width: 800px; */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.step {
+  padding: 2rem;
+  background: var(--card);
+  border-radius: var(--radius);
+  position: relative;
+  width: 60%;
+  transition: transform 0.2s ease;
+}
+
+.step:hover {
+  transform: translateY(-4px);
+}
+
+.stepLeft {
+  align-self: flex-start;
+}
+
+.stepRight {
+  align-self: flex-end;
+}
+
+.stepNumber {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.stepTitle {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.stepDescription {
+  color: var(--muted-foreground);
+}
+
+@media (min-width: 768px) {
+  .features {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

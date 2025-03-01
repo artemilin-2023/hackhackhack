@@ -1,0 +1,79 @@
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+  font-weight: 500;
+  transition: all 0.2s ease;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+/* Variants */
+.primary {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.primary:hover {
+  opacity: 0.9;
+}
+
+.secondary {
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
+}
+
+.secondary:hover {
+  background-color: var(--muted);
+}
+
+.outline {
+  border: 1px solid var(--primary);
+  background: transparent;
+  color: var(--foreground);
+}
+
+.outline:hover {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.destructive {
+  background-color: var(--destructive);
+  color: var(--destructive-foreground);
+}
+
+.destructive:hover {
+  opacity: 0.9;
+}
+
+/* Sizes */
+.sm {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.75rem;
+}
+
+.md {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+.lg {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+}
+
+/* States */
+.button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

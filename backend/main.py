@@ -1,7 +1,10 @@
 from contextlib import asynccontextmanager
 import re
+import os
+from typing import List
 
 import uvicorn
+from dotenv import load_dotenv
 
 from fastapi import FastAPI, HTTPException
 from starlette import status
@@ -14,6 +17,13 @@ from dependencies import get_static_uibanskie_pythonskie_dependence_injection_us
 from domain.user import Role
 from infrastructure.database import on_start_up
 
+# Загружаем переменные окружения из .env файла
+load_dotenv()
+
+def get_cors_origins() -> List[str]:
+    origins_str = os.getenv("CORS_ALLOWED_ORIGINS", "http://localhost:5173")
+    return [origin.strip() for origin in origins_str.split(",")]
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     on_start_up()
@@ -24,10 +34,10 @@ app = FastAPI(lifespan=lifespan)
 # Настройка CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=get_cors_origins(),
+    allow_credentials=os.getenv("CORS_ALLOW_CREDENTIALS", "true") == "true",
+    allow_methods=os.getenv("CORS_ALLOW_METHODS", "*"),
+    allow_headers=os.getenv("CORS_ALLOW_HEADERS", "*"),
 )
 
 app.include_router(user_routes.router)

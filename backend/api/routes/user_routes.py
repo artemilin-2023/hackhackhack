@@ -17,13 +17,8 @@ router = APIRouter(
 
 
 @router.post("/register", response_model=UserResponse)
-async def register(service: UserServiceDep, response: Response,
-                   name: str = Form(),
-                   email: EmailStr = Form(),
-                   password: str = Form(),
-                   role: PublicRole = Form()):
+async def register(request: CreateUserRequest, service: UserServiceDep, response: Response):
     try:
-        request = CreateUserRequest(name=name, email=email, password=password, role=role)
         user = service.register_user(request, response)
         return user
     except ValueError as e:
@@ -31,10 +26,7 @@ async def register(service: UserServiceDep, response: Response,
 
 
 @router.post("/login")
-async def login(service: UserServiceDep, response: Response,
-                email: EmailStr = Form(),
-                password: str = Form()):
-    request = AuthRequest(email=email, password=password)
+async def login(request: AuthRequest, service: UserServiceDep, response: Response):
     service.login(request, response)
     return JSONResponse(content={"message": "ok"}, status_code=200, headers=response.headers)
 

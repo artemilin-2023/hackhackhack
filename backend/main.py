@@ -13,9 +13,22 @@ from starlette.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.routes import user_routes, lot_routes, oil_pump_routes
-from dependencies import get_static_uibanskie_pythonskie_dependence_injection_user_service
+from dependencies import get_static_user_service
 from domain.user import Role
 from infrastructure.database import on_start_up
+from common.logger import log
+from infrastructure.background_tasks import lot_expiration_checker
+
+
+# =============================
+# Отказ от ответственности
+# =============================
+#
+# Я не пайтон разработчик и никогда им не был, 
+# про ограничения на стек я узнал за день до хакатона,
+# поэтому некоторые вещи могут быть сделаны не так, как положено.
+#
+# =============================
 
 load_dotenv()
 
@@ -26,11 +39,15 @@ def get_cors_origins() -> List[str]:
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     on_start_up()
+    
+    await lot_expiration_checker.start()
+    
     yield
+    
+    await lot_expiration_checker.stop()
 
 app = FastAPI(lifespan=lifespan)
 
-# Настройка CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=get_cors_origins(),
@@ -45,13 +62,13 @@ app.include_router(oil_pump_routes.router)
 # app.include_router(order_routes.router)
 
 restricted_routes = {
-    # любой маршрут, начинающийся с /lots
-    r"^\/lots.*$": {
-        "methods": ["POST", "DELETE", "PATCH"],
+    # любой маршрут, начинающийся с /lots, кроме /lots/active
+    r"^\/lots(\/(?!active$)(\d+)?)?$": {
+        "methods": ["POST", "DELETE", "PATCH", "GET"],
         "required_roles": [Role.admin]
     },
     r"^\/oil-pumps.*$": {
-        "methods": ["POST", "DELETE", "PATCH", "GET"],
+        "methods": ["POST", "DELETE", "PATCH"],
         "required_roles": [Role.admin]
     },
     # любой маршрут, кроме /login, /register, /docs, требует наличия авторизации.
@@ -62,7 +79,7 @@ restricted_routes = {
 }
 
 # боже храни шарпы, слава майкрософт и его DI контейнерам
-app.state._user_service = get_static_uibanskie_pythonskie_dependence_injection_user_service()
+app.state._user_service = get_static_user_service()
 
 @app.middleware("http")
 async def role_middleware(request: Request, call_next):
@@ -79,7 +96,8 @@ async def role_middleware(request: Request, call_next):
             status_code=ex.status_code,
             content={'detail': ex.detail}
         )
-    except Exception:
+    except Exception as ex:
+        log.error(f"Error in role middleware: {ex}")
         return JSONResponse(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             content={'detail': "internal server error"}

@@ -14,6 +14,12 @@ class OilPumpRepository:
 
     def get_by_id(self, pump_id: int) -> Optional[OilPump]:
         return self.session.get(OilPump, pump_id)
+    
+    def get_all_unique_names(self) -> List[str]:
+        return self.session.exec(select(OilPump.name).distinct()).all()
+    
+    def get_by_name_and_region(self, name: str, region: str) -> Optional[OilPump]:
+        return self.session.exec(select(OilPump).where(OilPump.name == name, OilPump.region == region)).first()
 
     def get_many(
         self,

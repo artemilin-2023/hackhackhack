@@ -41,11 +41,11 @@ export const LotItem = ({ lot }: { lot: INewLot }) => {
 				<div className={styles.weight}>
 					<div>
 						<h4>Начальный вес</h4>
-						<p>{lot.initial_weight} т</p>
+						<p>{Math.round(lot.initial_weight)} т</p>
 					</div>
 					<div>
 						<h4>Доступный вес</h4>
-						<p>{lot.available_weight} т</p>
+						<p>{Math.round(lot.available_weight)} т</p>
 					</div>
 				</div>
 			</div>
@@ -54,11 +54,11 @@ export const LotItem = ({ lot }: { lot: INewLot }) => {
 				<div className={styles.price}>
 					<div>
 						<h4>Цена за тонну</h4>
-						<p>{lot.price_per_ton} ₽</p>
+						<p>{Math.round(lot.price_per_ton)} ₽</p>
 					</div>
 					<div>
 						<h4>Общая стоимость</h4>
-						<p>{lot.total_price} ₽</p>
+						<p>{Math.round(lot.total_price)} ₽</p>
 					</div>
 				</div>
 				<div className={styles.expiration}>

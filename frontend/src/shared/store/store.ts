@@ -61,14 +61,22 @@ class Store {
 		page_number: number, 
 		page_size: number, 
 		sort_by?: string,
-		sort_desc?: boolean
+		sort_desc?: boolean,
+		search?: string
 	) {
 		try {
 			const response = await LotsService.getLots(
 				page_number, 
 				page_size, 
-				sort_by, 
-				sort_desc
+				sort_by,
+				sort_desc,
+				undefined, // status
+				undefined, // oil_type
+				undefined, // min_price
+				undefined, // max_price
+				undefined, // region
+				undefined, // available_weight_min
+				search
 			);
 			this.lots = response.data.items as unknown as INewLot[];
 			this.pagination = response.data.pagination;

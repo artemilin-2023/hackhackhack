@@ -13,7 +13,8 @@ export default class LotsService {
 		min_price?: number,
 		max_price?: number,
 		region?: string,
-		available_weight_min?: number
+		available_weight_min?: number,
+		search?: string
 	): Promise<AxiosResponse<ILotResponse>> {
 		const params = new URLSearchParams({
 			page: page_number.toString(),
@@ -25,7 +26,8 @@ export default class LotsService {
 			...(min_price && { min_price: min_price.toString() }),
 			...(max_price && { max_price: max_price.toString() }),
 			...(region && { region }),
-			...(available_weight_min && { available_weight_min: available_weight_min.toString() })
+			...(available_weight_min && { available_weight_min: available_weight_min.toString() }),
+			...(search && { search })
 		});
 
 		return $api.get<ILotResponse>(`/lots/?${params.toString()}`);

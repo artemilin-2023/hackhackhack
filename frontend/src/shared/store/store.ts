@@ -3,6 +3,7 @@ import { createContext, useContext } from "react";
 
 import AuthService from "features/Auth/AuthService";
 import LotsService from "features/Lots/LotsService"
+import OrderService, { IOrder } from "features/Order/OrderService";
 
 import { IRegisterProps, IUser } from "features/Auth/Auth.model"
 import { INewLot, ICreateLotProps } from "features/Lots/Lots.model" 
@@ -13,6 +14,7 @@ class Store {
 	
 	lots: INewLot[] = []
 	activeLot: INewLot | null = null
+	orders: INewLot[] = []
 	pumpNames: Array<string> = []
 
 	pagination: {
@@ -34,18 +36,24 @@ class Store {
 		this.getMe();
 		if (this.user) { 
 			this.getLots(1, 6);
+			this.getOrders();
 		}	
 		this.getPumpNames();
 	}
 
 	async login(email: string, password: string) {
 		const response = await AuthService.login(email, password);
-		this.user = response.user;
+
+		if (response.status === 200) {
+			await this.getMe();
+		}
 	}
 
 	async register({ name, email, password, role }: IRegisterProps) {
 		const response = await AuthService.register({ name, email, password, role });
-		this.user = response.user;
+		if (response.status === 200) {
+			await this.getMe();
+		}
 	}
 
 	async getMe() {
@@ -56,6 +64,18 @@ class Store {
 	async logout() {
 		await AuthService.logOut();
 		this.user = null
+	}
+
+	async getOrders() {
+		const response = await OrderService.getOrders();
+		this.orders = response.data;
+	}
+
+	async createOrder(order: IOrder) {
+		const response = await OrderService.createOrder(order);
+		if (response.status === 200) {
+			this.orders = [...response.data];
+		}
 	}
 
 	async getLots(

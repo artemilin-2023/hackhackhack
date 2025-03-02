@@ -18,7 +18,7 @@ from domain.user import Role
 from infrastructure.database import on_start_up
 from common.logger import log
 from infrastructure.background_tasks import lot_expiration_checker
-
+from dependencies import get__static_ftp_client_scheduler
 
 # =============================
 # Отказ от ответственности
@@ -40,10 +40,12 @@ def get_cors_origins() -> List[str]:
 async def lifespan(app: FastAPI):
     on_start_up()
     
+    ftp_client_scheduler = get__static_ftp_client_scheduler()
     await lot_expiration_checker.start()
-    
+    await ftp_client_scheduler.start()
     yield
     
+    await ftp_client_scheduler.stop()
     await lot_expiration_checker.stop()
 
 app = FastAPI(lifespan=lifespan)
@@ -75,7 +77,12 @@ restricted_routes = {
     r"^(?!\/(?:login|register|docs|openapi.json)$).*$": {
         "methods": ["POST", "DELETE", "GET", "PATCH", "PUT"],
         "required_roles": [Role.admin, Role.customer]
-    }
+    },
+    # Маршрут /lots/update-from-ftp доступен только админеам
+    r"^\/lots\/update-from-ftp$": {
+        "methods": ["POST"],
+        "required_roles": [Role.admin]
+    },
 }
 
 # боже храни шарпы, слава майкрософт и его DI контейнерам

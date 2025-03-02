@@ -2,15 +2,17 @@ import { useStore } from "shared/store/store"
 import { observer } from "mobx-react-lite"
 import { useEffect, useState } from "react"
 import { INewLot } from "features/Lots/Lots.model"
+import { Button } from "shared/ui/button"
+import { HiOutlineLogout, HiSearch } from "react-icons/hi"
 import styles from "./PersonalPage.module.css"
 
 export const PersonalPage = observer(() => {
 	const store = useStore()
 	const [purchaseHistory, setPurchaseHistory] = useState<INewLot[]>([])
+	const [searchQuery, setSearchQuery] = useState("")
+	const [filteredHistory, setFilteredHistory] = useState<INewLot[]>([])
 	
 	useEffect(() => {
-		// Мокнутые данные истории покупок
-		// В реальном приложении здесь был бы запрос к API
 		setPurchaseHistory([
 			{
 				id: 1,
@@ -65,12 +67,33 @@ export const PersonalPage = observer(() => {
 			}
 		])
 	}, [])
+	
+	useEffect(() => {
+		let filtered = [...purchaseHistory]
+		
+		// Фильтрация по поисковому запросу
+		if (searchQuery) {
+			filtered = filtered.filter(purchase => 
+				purchase.oil_type.toLowerCase().includes(searchQuery.toLowerCase()) ||
+				purchase.oil_pump?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+				purchase.oil_pump?.region.toLowerCase().includes(searchQuery.toLowerCase())
+			)
+		}
+		
+		setFilteredHistory(filtered)
+	}, [purchaseHistory, searchQuery])
 
 	if (!store.user) {
 		return (
 			<div className={styles.notAuthorized}>
 				<h2>Вы не авторизованы</h2>
 				<p>Пожалуйста, войдите в систему для доступа к личному кабинету</p>
+				<Button 
+					onClick={() => window.location.href = '/auth'}
+					className={styles.authButton}
+				>
+					Войти в систему
+				</Button>
 			</div>
 		)
 	}
@@ -79,12 +102,14 @@ export const PersonalPage = observer(() => {
 		<div className={styles.container}>
 			<div className={styles.header}>
 				<h1>Личный кабинет</h1>
-				<button 
+				<Button 
+					variant="outline"
 					className={styles.logoutButton}
 					onClick={() => store.logout()}
 				>
+					<HiOutlineLogout className={styles.buttonIcon} />
 					Выйти
-				</button>
+				</Button>
 			</div>
 			
 			<div className={styles.userInfoCard}>
@@ -103,15 +128,37 @@ export const PersonalPage = observer(() => {
 			</div>
 			
 			<div className={styles.section}>
-				<h2 className={styles.sectionTitle}>История покупок</h2>
+				<div className={styles.sectionHeader}>
+					<h2 className={styles.sectionTitle}>История покупок</h2>
+					<div className={styles.filterControls}>
+						<div className={styles.searchInputWrapper}>
+							<HiSearch className={styles.searchIcon} />
+							<input
+								type="text"
+								value={searchQuery}
+								onChange={(e) => setSearchQuery(e.target.value)}
+								placeholder="Поиск по истории"
+								className={styles.searchInput}
+							/>
+						</div>
+					</div>
+				</div>
 				
-				{purchaseHistory.length === 0 ? (
+				{filteredHistory.length === 0 ? (
 					<div className={styles.emptyHistory}>
-						<p>У вас пока нет покупок</p>
+						<div className={styles.emptyIcon}>🛒</div>
+						<h3>У вас пока нет покупок</h3>
+						<p>Здесь будет отображаться история ваших покупок</p>
+						<Button 
+							onClick={() => window.location.href = '/lots'}
+							className={styles.browseButton}
+						>
+							Перейти в каталог
+						</Button>
 					</div>
 				) : (
 					<div className={styles.purchaseHistory}>
-						{purchaseHistory.map((purchase) => (
+						{filteredHistory.map((purchase) => (
 							<div key={purchase.id} className={styles.purchaseCard}>
 								<div className={styles.purchaseHeader}>
 									<div className={styles.purchaseType}>
@@ -140,11 +187,11 @@ export const PersonalPage = observer(() => {
 									</div>
 									<div className={styles.detailItem}>
 										<span className={styles.detailLabel}>Цена за тонну:</span>
-										<span className={styles.detailValue}>{purchase.price_per_ton} ₽</span>
+										<span className={styles.detailValue}>{purchase.price_per_ton.toLocaleString()} ₽</span>
 									</div>
 									<div className={styles.detailItem}>
 										<span className={styles.detailLabel}>Общая стоимость:</span>
-										<span className={styles.detailValue}>{purchase.total_price} ₽</span>
+										<span className={styles.detailValue}>{purchase.total_price.toLocaleString()} ₽</span>
 									</div>
 								</div>
 								

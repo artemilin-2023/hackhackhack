@@ -19,10 +19,17 @@ services:
       - CORS_ALLOW_CREDENTIALS=true
       - CORS_ALLOW_METHODS=*
       - CORS_ALLOW_HEADERS=*
+      - FTP_HOST=ftp-server
+      - FTP_PORT=21
+      - FTP_USER=admin
+      - FTP_PASSWORD=asd
+      - FTP_DIR=.
     depends_on:
       postgres:
         condition: service_healthy
         restart: true
+      ftp-server:
+        condition: service_started
         
   ftp-server:
     build: ./ftp-server

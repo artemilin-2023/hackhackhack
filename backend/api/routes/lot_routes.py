@@ -10,7 +10,7 @@ from api.models.lot_models import (
     LotFilter,
     PublicLotFilter
 )
-from dependencies import LotServiceDep
+from dependencies import LotServiceDep, FTPClientServiceDep
 from domain.lot import LotStatus, OilType
 
 router = APIRouter(
@@ -127,3 +127,16 @@ async def delete_lot(
     service: LotServiceDep
 ):
     service.delete_lot(lot_id)
+
+@router.post("/update-from-ftp", status_code=status.HTTP_200_OK)
+async def update_lots_from_ftp(
+    ftp_client: FTPClientServiceDep 
+):
+    try:
+        ftp_client.download_files()
+        return {"message": "Лоты успешно обновлены из FTP-сервера."}
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Ошибка при обновлении лотов из FTP: {str(e)}"
+        )

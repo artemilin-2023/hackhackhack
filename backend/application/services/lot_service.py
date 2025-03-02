@@ -41,7 +41,7 @@ class LotService:
             ksss_nb_code=lot_data.ksss_nb_code,
             ksss_fuel_code=lot_data.ksss_fuel_code,
             initial_weight=lot_data.initial_weight,
-            available_weight=lot_data.available_weight,
+            available_weight=lot_data.initial_weight,
             total_price=lot_data.total_price,
             price_per_ton=lot_data.price_per_ton,
             oil_type=lot_data.oil_type,

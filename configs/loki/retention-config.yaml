@@ -14,11 +14,27 @@ common:
 schema_config:
   configs:
   - from: 2020-05-15
-    store: boltdb-shipper
+    store: tsdb
     object_store: filesystem
-    schema: v11
+    schema: v13
     index:
       prefix: index_
       period: 24h
 
-      monitoring/
+storage_config:
+  tsdb_shipper:
+    active_index_directory: /tmp/loki/tsdb-index
+    cache_location: /tmp/loki/tsdb-cache
+  filesystem:
+    directory: /tmp/loki/chunks
+
+limits_config:
+  allow_structured_metadata: true
+
+compactor:
+  working_directory: /tmp/loki/compactor
+  compaction_interval: 10m
+  retention_enabled: true
+  retention_delete_delay: 2h
+  retention_delete_worker_count: 150
+  delete_request_store: filesystem

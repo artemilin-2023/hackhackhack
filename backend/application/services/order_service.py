@@ -2,14 +2,14 @@ from fastapi import HTTPException
 from starlette import status
 from starlette.requests import Request
 import math
-from typing import Optional, List, Dict, Any
-from datetime import date, datetime
+from typing import Optional
+from datetime import date
 
 from application.services.user_services import UserService
 from domain.user import Role
 from infrastructure.repositories.order_repository import OrderRepository
 from domain.order import Order, OrderStatus
-from api.models.order_models import OrdersCreate, OrdersRead, PaginatedOrders
+from api.models.order_models import OrdersCreate, PaginatedOrders
 from api.models.lot_models import Pagination
 from domain.lot import Lot, LotStatus
 from infrastructure.repositories.lot_repository import LotRepository
@@ -21,9 +21,10 @@ class OrderService:
         self._order_repository = order_repository
         self._lot_repository = lot_repository
         self._user_service = user_service
-
-    def create_order(self, request: Request, order_data: OrdersCreate) -> OrdersRead:
+    
+    def create_order(self, request: Request, order_data: OrdersCreate):
         lots_in_order = []
+        
         for order in order_data.orders:
             lot = self._lot_repository.get_by_id(order.lot_id)
             if not lot:
@@ -54,19 +55,30 @@ class OrderService:
                 status=OrderStatus.PENDING
             )
 
-            if lot.available_weight == order.volume:
-                lot = self._lot_repository.update(lot.id, {"status": LotStatus.SOLD})
+            if lot.available_weight < order.volume:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Not enough available weight in the lot"
+                )
 
+            lot.available_weight -= order.volume
+            lot = self._lot_repository.update(lot.id, {"available_weight": lot.available_weight})
+
+            if lot.available_weight == 0:
+                lot = self._lot_repository.update(lot.id, {"status": LotStatus.SOLD})
+            
+            lots_in_order.append(lot.model_dump())
             self._order_repository.create(order)
-            lots_in_order.append(lot)
 
         if not lots_in_order:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="No lots in order"
             )
+        
+        return lots_in_order
 
-        return OrdersRead(orders=lots_in_order)
+        
 
     def get_lots_by_user(
         self,
@@ -76,11 +88,11 @@ class OrderService:
         filters: Optional[OrderFilter] = None,
         sort_by: str = "id",
         sort_desc: bool = False,
-    ) -> OrdersRead:
+    ):
         filters_dict = filters.model_dump(exclude_none=True) if filters else {}
         
         user = self._user_service.get_current_user(request)
-        if user.role != Role.ADMIN:
+        if user.role != Role.admin:
             filters_dict["customer_id"] = user.id
         
         lots, total_count = self._order_repository.get_many_lots_by_customer(

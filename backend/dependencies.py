@@ -8,7 +8,7 @@ from application.services.oil_pump_service import OilPumpService
 from application.services.order_service import OrderService
 from application.services.user_services import UserService
 from application.services.ftp_client_service import FTPClientService
-from infrastructure.database import get_session, get_static_session, get_static_session2
+from infrastructure.database import get_session, get_static_session
 from infrastructure.repositories.lot_repository import LotRepository
 from infrastructure.repositories.oil_pump_repository import OilPumpRepository
 from infrastructure.repositories.order_repository import OrderRepository

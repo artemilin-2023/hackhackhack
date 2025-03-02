@@ -2,6 +2,7 @@ from typing import Optional, List, Dict, Any, Tuple
 from sqlalchemy import func
 from sqlmodel import Session, select, desc, asc
 from domain.order import Order
+from domain.lot import Lot
 
 
 class OrderRepository:
@@ -16,7 +17,7 @@ class OrderRepository:
         return order
 
     def get_by_id(self, order_id: int) -> Optional[Order]:
-        return self._session.get(Order, order_id)
+        return self._session.exec(select(Order).where(Order.id == order_id)).one_or_none()
 
     def get_many_lots_by_customer(
         self,
@@ -26,14 +27,18 @@ class OrderRepository:
         filters: Optional[Dict[str, Any]] = None,
         sort_by: str = "id",
         sort_desc: bool = False,
-    ) -> Tuple[List[Order], int]:
-        query = select(Order).where(Order.customer_id == customer_id)
+    ) -> Tuple[List[Lot], int]:
+        query = (
+            select(Lot)
+            .join(Order, Order.lot_id == Lot.id)
+            .where(Order.customer_id == customer_id)
+        )
 
         if filters:
             if "min_volume" in filters:
                 query = query.where(Order.volume >= filters["min_volume"])
             if "max_volume" in filters:
-                query = query.where(Order.volume <= filters["max_volume"])
+                query = query.where(Order.volume <= filters["max_volume"]) 
             if "start_date" in filters:
                 query = query.where(Order.order_date >= filters["start_date"])
             if "end_date" in filters:
@@ -47,13 +52,13 @@ class OrderRepository:
 
         total_count = len(self._session.exec(query).all())
 
-        sort_column = getattr(Order, sort_by, Order.id)
+        sort_column = getattr(Lot, sort_by, Lot.id)
         query = query.order_by(desc(sort_column) if sort_desc else asc(sort_column))
 
         query = query.offset((page - 1) * size).limit(size)
         
-        orders = self._session.exec(query).all()
-        return orders, total_count
+        lots = self._session.exec(query).all()
+        return lots, total_count
 
     def update(self, order_id: int, order_data: Dict[str, Any]) -> Optional[Order]:
         order = self.get_by_id(order_id)

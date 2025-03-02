@@ -38,8 +38,8 @@ class LotRepository:
                         OilPump.region.ilike(search_pattern),
                         OilPump.name.ilike(search_pattern),
                         Lot.oil_type.in_([ot for ot in OilType if search_term.lower() in ot.value.lower()]),
-                        Lot.ksss_fuel_code == int(search_term) if search_term.isdigit() else False,
-                        Lot.ksss_nb_code == int(search_term) if search_term.isdigit() else False
+                        Lot.ksss_fuel_code == search_term,
+                        Lot.ksss_nb_code == search_term
                     )
                 )
             if "status" in filters:

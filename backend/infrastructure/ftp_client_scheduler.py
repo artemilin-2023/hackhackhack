@@ -6,7 +6,7 @@ from typing import Optional
 
 class FTPClientScheduler:
     def __init__(self, ftp_client: FTPClientService):
-        self.interval_hours = int(os.getenv("FTP_UPDATE_INTERVAL_HOURS", "24"))  # Интервал в часах
+        self.interval_hours = int(os.getenv("FTP_UPDATE_INTERVAL_HOURS", "24"))
         self.is_running = False
         self.task: Optional[asyncio.Task] = None
         self.ftp_client = ftp_client
@@ -44,4 +44,4 @@ class FTPClientScheduler:
             except Exception as e:
                 log.error(f"Ошибка при загрузке файлов с FTP: {e}")
 
-            await asyncio.sleep(self.interval_hours * 3600)  # Интервал в секундах
+            await asyncio.sleep(self.interval_hours * 3600)

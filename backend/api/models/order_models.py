@@ -5,6 +5,7 @@ from api.models.pagination import Pagination
 from domain.order import OrderStatus
 from domain.lot import Lot
 from domain.order import DeliveryType
+
 class OrderBase(BaseModel):
     lot_id: int = Field(..., gt=0)
     volume: float = Field(..., gt=0)
@@ -12,12 +13,6 @@ class OrderBase(BaseModel):
 
 class OrdersCreate(BaseModel):
     orders: List[OrderBase]
-
-class OrdersRead(BaseModel):
-    orders: List[Lot]
-    
-    class Config:
-        from_attributes = True
 
 class OrderFilter(BaseModel):
     status: Optional[OrderStatus] = None

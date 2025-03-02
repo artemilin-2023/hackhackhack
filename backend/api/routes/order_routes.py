@@ -1,29 +1,31 @@
-from typing import List, Optional, Dict, Any
-from fastapi import APIRouter, Depends, Query, Request
+import asyncio
+from typing import List, Optional
+from fastapi import APIRouter, Query, Request
 from starlette import status
 from datetime import date
-
+from common.logger import log
 from api.models.order_models import (
     OrdersCreate,
-    OrdersRead,
     PaginatedOrders,
     OrderFilter
 )
 from dependencies import OrderServiceDep
 from domain.order import OrderStatus
+from domain.lot import Lot
 
 router = APIRouter(
     prefix="/orders",
     tags=["orders"]
 )
 
-@router.post("/", response_model=OrdersRead, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=List[Lot], status_code=status.HTTP_201_CREATED)
 async def create_order(
     request: Request,
     order_data: OrdersCreate,
     order_service: OrderServiceDep,
 ):
-    return order_service.create_order(request, order_data)
+    data = order_service.create_order(request, order_data)
+    return data
 
 @router.get("/my", response_model=PaginatedOrders)
 async def get_orders(

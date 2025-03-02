@@ -19,24 +19,32 @@ export const AuthForm = () => {
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
-		// ahaha start
 		async function auth() {
+			let intervalId: number;
+			
 			if (mode === 'login') {
 				await store.login(formData.email, formData.password);
-				setInterval(() => {
-					store.getMe();;
+				intervalId = window.setInterval(() => {
+					if (store.user) {
+						clearInterval(intervalId);
+					} else {
+						store.getMe();
+					}
 				}, 600);
 				
 			} else {
 				await store.register(formData);
-				setInterval(() => {
-					store.getMe();
+				intervalId = window.setInterval(() => {
+					if (store.user) {
+						clearInterval(intervalId);
+					} else {
+						store.getMe();
+					}
 				}, 600);
 			}
 		}
 
-		auth()
-		// ahaha end
+		auth();
 	};
 
 	return (

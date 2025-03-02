@@ -77,12 +77,7 @@ restricted_routes = {
     r"^(?!\/(?:login|register|docs|openapi.json)$).*$": {
         "methods": ["POST", "DELETE", "GET", "PATCH", "PUT"],
         "required_roles": [Role.admin, Role.customer]
-    },
-    # Маршрут /lots/update-from-ftp доступен только админеам
-    r"^\/lots\/update-from-ftp$": {
-        "methods": ["POST"],
-        "required_roles": [Role.admin]
-    },
+    }
 }
 
 # боже храни шарпы, слава майкрософт и его DI контейнерам

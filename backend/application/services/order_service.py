@@ -55,10 +55,16 @@ class OrderService:
             )
 
             if lot.available_weight == order.volume:
-                self._lot_repository.update(lot.id, {"status": LotStatus.SOLD})
+                lot = self._lot_repository.update(lot.id, {"status": LotStatus.SOLD})
 
             self._order_repository.create(order)
             lots_in_order.append(lot)
+
+        if not lots_in_order:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No lots in order"
+            )
 
         return OrdersRead(orders=lots_in_order)
 

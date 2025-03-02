@@ -19,17 +19,32 @@ export const AuthForm = () => {
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
+		// ahaha start
 		if (mode === 'login') {
 			store.login(formData.email, formData.password);
 			setTimeout(() => {
 				store.getMe();
+				setTimeout(() => {
+					store.getMe();
+					setTimeout(() => {
+						store.getMe();
+					}, 600);
+				}, 600);
 			}, 600);
+			
 		} else {
 			store.register(formData);
 			setTimeout(() => {
 				store.getMe();
+				setTimeout(() => {
+					store.getMe();
+					setTimeout(() => {
+						store.getMe();
+					}, 600);
+				}, 600);
 			}, 600);
 		}
+		// ahaha end
 	};
 
 	return (

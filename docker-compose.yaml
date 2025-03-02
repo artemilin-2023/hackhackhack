@@ -15,7 +15,7 @@ services:
       - JWT_VARY_SECRET_HASH_IN_PUBLIC_REPO=1965d3ece323947d9a778a9341cc68828e708842dc8f809750fcf9985f27d67e
       - JWT_ALGORITHM=HS256
       - JWT_ACCESS_TOKEN_EXPIRE_HOURS=24
-      - CORS_ALLOWED_ORIGINS=http://localhost:5173,https://localhost:5173
+      - CORS_ALLOWED_ORIGINS=http://localhost:5173,https://localhost:5173,http://localhost:5174,https://localhost:5174
       - CORS_ALLOW_CREDENTIALS=true
       - CORS_ALLOW_METHODS=*
       - CORS_ALLOW_HEADERS=*

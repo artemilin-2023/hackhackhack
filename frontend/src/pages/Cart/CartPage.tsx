@@ -38,7 +38,7 @@ export const CartPage = observer(() => {
             for (const item of store.cart) {
                 await store.createOrder({
                     lot_id: item.lot_id,
-                    quantity: item.requested_weight,
+                    volume: item.requested_weight,
                     delivery_type: deliveryType
                 });
             }

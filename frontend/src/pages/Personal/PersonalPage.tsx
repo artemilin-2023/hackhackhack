@@ -8,70 +8,30 @@ import styles from "./PersonalPage.module.css"
 
 export const PersonalPage = observer(() => {
 	const store = useStore()
-	const [purchaseHistory, setPurchaseHistory] = useState<INewLot[]>([])
+	const [isLoading, setIsLoading] = useState(true)
 	const [searchQuery, setSearchQuery] = useState("")
 	const [filteredHistory, setFilteredHistory] = useState<INewLot[]>([])
 	
 	useEffect(() => {
-		setPurchaseHistory([
-			{
-				id: 1,
-				lot_expiration_date: "2023-12-31",
-				ksss_nb_code: 12345,
-				ksss_fuel_code: 54321,
-				initial_weight: 100,
-				available_weight: 0,
-				status: "Продан",
-				total_price: 750000,
-				price_per_ton: 7500,
-				oil_type: "АИ-95",
-				oil_pump: {
-					id: 1,
-					name: "Нефтебаза №1",
-					region: "Московская область"
-				}
-			},
-			{
-				id: 2,
-				lot_expiration_date: "2023-11-15",
-				ksss_nb_code: 23456,
-				ksss_fuel_code: 65432,
-				initial_weight: 50,
-				available_weight: 0,
-				status: "Продан",
-				total_price: 325000,
-				price_per_ton: 6500,
-				oil_type: "АИ-92",
-				oil_pump: {
-					id: 2,
-					name: "Нефтебаза №2",
-					region: "Ленинградская область"
-				}
-			},
-			{
-				id: 3,
-				lot_expiration_date: "2023-10-20",
-				ksss_nb_code: 34567,
-				ksss_fuel_code: 76543,
-				initial_weight: 75,
-				available_weight: 0,
-				status: "Продан",
-				total_price: 600000,
-				price_per_ton: 8000,
-				oil_type: "ДТ",
-				oil_pump: {
-					id: 3,
-					name: "Нефтебаза №3",
-					region: "Краснодарский край"
-				}
+		const fetchPurchaseHistory = async () => {
+			setIsLoading(true)
+			try {
+				await store.getOrders()
+				setIsLoading(false)
+			} catch (error) {
+				console.error("Error fetching purchase history:", error)
+				setIsLoading(false)
 			}
-		])
-	}, [])
+		}
+		
+		if (store.user) {
+			fetchPurchaseHistory()
+		}
+	}, [store.user])
 	
 	useEffect(() => {
-		let filtered = [...purchaseHistory]
+		let filtered = [...store.orders]
 		
-		// Фильтрация по поисковому запросу
 		if (searchQuery) {
 			filtered = filtered.filter(purchase => 
 				purchase.oil_type.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -81,7 +41,7 @@ export const PersonalPage = observer(() => {
 		}
 		
 		setFilteredHistory(filtered)
-	}, [purchaseHistory, searchQuery])
+	}, [store.orders, searchQuery])
 
 	if (!store.user) {
 		return (
@@ -144,7 +104,13 @@ export const PersonalPage = observer(() => {
 					</div>
 				</div>
 				
-				{filteredHistory.length === 0 ? (
+				{isLoading ? (
+					<div className={styles.emptyHistory}>
+						<div className={styles.emptyIcon}>⏳</div>
+						<h3>Загрузка данных...</h3>
+						<p>Пожалуйста, подождите</p>
+					</div>
+				) : filteredHistory.length === 0 ? (
 					<div className={styles.emptyHistory}>
 						<div className={styles.emptyIcon}>🛒</div>
 						<h3>У вас пока нет покупок</h3>

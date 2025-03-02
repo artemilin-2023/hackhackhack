@@ -12,7 +12,6 @@ export const AuthForm = () => {
 		email: '',
 		password: '',
 		name: '',
-		role: 'customer'
 	});
 
 	const store = useStore();
@@ -24,12 +23,12 @@ export const AuthForm = () => {
 			store.login(formData.email, formData.password);
 			setTimeout(() => {
 				store.getMe();
-			}, 400);
+			}, 600);
 		} else {
 			store.register(formData);
 			setTimeout(() => {
 				store.getMe();
-			}, 400);
+			}, 600);
 		}
 	};
 
@@ -100,28 +99,6 @@ export const AuthForm = () => {
 						required
 					/>
 				</div>
-
-				{mode === 'register' && (
-					<div className={styles.formGroup}>
-						<label>Тип аккаунта</label>
-						<div className={styles.roleSwitch}>
-							<button
-								type="button"
-								className={`${styles.roleButton} ${formData.role === 'customer' ? styles.active : ''}`}
-								onClick={() => setFormData({ ...formData, role: 'customer' })}
-							>
-								Покупатель
-							</button>
-							<button
-								type="button"
-								className={`${styles.roleButton} ${formData.role === 'seller' ? styles.active : ''}`}
-								onClick={() => setFormData({ ...formData, role: 'seller' })}
-							>
-								Продавец
-							</button>
-						</div>
-					</div>
-				)}
 
 				<Button type="submit" className={styles.submitButton}>
 					{mode === 'login' ? 'Войти' : 'Создать аккаунт'}

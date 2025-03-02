@@ -3,6 +3,7 @@ import { Button } from 'shared/ui/button';
 import { useStore } from 'shared/store/store';
 import styles from './AddToCartForm.module.css';
 import { INewLot } from 'features/Lots/Lots.model';
+import { toast } from 'react-toastify';
 
 export const AddToCartForm = ({ lot }: { lot: INewLot }) => {
     const [requestedWeight, setRequestedWeight] = useState(lot.available_weight);
@@ -16,6 +17,15 @@ export const AddToCartForm = ({ lot }: { lot: INewLot }) => {
             price_per_ton: lot.price_per_ton,
             oil_type: lot.oil_type,
             oil_pump: lot.oil_pump
+        });
+        
+        toast.success(`${lot.oil_type} успешно добавлен в корзину!`, {
+            position: "bottom-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
         });
     };
 

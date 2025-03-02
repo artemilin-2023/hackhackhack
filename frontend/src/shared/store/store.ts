@@ -49,8 +49,8 @@ class Store {
 		}
 	}
 
-	async register({ name, email, password, role }: IRegisterProps) {
-		const response = await AuthService.register({ name, email, password, role });
+	async register({ name, email, password }: IRegisterProps) {
+		const response = await AuthService.register({ name, email, password });
 		if (response.status === 200) {
 			await this.getMe();
 		}
@@ -68,7 +68,8 @@ class Store {
 
 	async getOrders() {
 		const response = await OrderService.getOrders();
-		this.orders = response.data;
+		this.orders = response.data.items;
+		this.pagination = response.data.pagination;
 	}
 
 	async createOrder(order: IOrder) {

@@ -1,6 +1,6 @@
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import './toast.css'; // Создадим этот файл для кастомных стилей
+import './toast.css';
 
 export const ToastProvider = () => {
   return (

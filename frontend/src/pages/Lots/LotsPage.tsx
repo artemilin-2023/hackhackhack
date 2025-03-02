@@ -5,6 +5,7 @@ import { LotItem } from "entities/Lots/LotItem"
 import { useEffect, useState } from "react"
 import { Button } from "shared/ui/button"
 import { LotsSorting } from "widgets/Lots/LotsSorting"
+import { useNavigate } from "react-router-dom"
 import styles from "./LotsPage.module.css"
 
 export const LotsPage = observer(() => {
@@ -28,6 +29,15 @@ export const LotsPage = observer(() => {
 			selectedPumpName
 		)
 	}, [currentPage, sortBy, isDescending, searchQuery, selectedOilType, selectedPumpName])
+
+	const navigate = useNavigate()
+
+	useEffect(() => {
+		if (!store.user) {
+			navigate("/auth")
+		}
+	}, [store.user])
+
 
 	const handleNextPage = () => {
 		if (store.pagination.has_next) {

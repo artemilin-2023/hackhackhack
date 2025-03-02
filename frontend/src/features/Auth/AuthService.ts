@@ -9,8 +9,8 @@ export default class AuthService {
 		return response.data;
 	}
 
-	static async register({ name, email, password, role }: IRegisterProps) {
-		const response = await $api.post("/register", { name, email, password, role });
+	static async register({ name, email, password }: IRegisterProps) {
+		const response = await $api.post("/register", { name, email, password });
 		return response.data;
 	}
 	static async logOut() {

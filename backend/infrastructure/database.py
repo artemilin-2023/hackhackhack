@@ -60,4 +60,3 @@ def get_session() -> Session:
 def get_static_session() -> Session:
     with Session(engine) as session:
         return session
-    

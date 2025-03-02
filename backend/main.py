@@ -74,7 +74,7 @@ restricted_routes = {
         "required_roles": [Role.admin]
     },
     # любой маршрут, кроме /login, /register, /docs, требует наличия авторизации.
-    r"^(?!\/api(?:login|register|docs|openapi.json)$).*$": {
+    r"^\/api\/(?!login$|register$|docs\/).*$": {
         "methods": ["POST", "DELETE", "GET", "PATCH", "PUT"],
         "required_roles": [Role.admin, Role.customer]
     }

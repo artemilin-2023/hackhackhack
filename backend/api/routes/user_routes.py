@@ -7,6 +7,7 @@ from api.models.user_models import CreateUserRequest, UserResponse
 from dependencies import UserServiceDep, AuthServiceDep
 
 router = APIRouter(
+    prefix="/api",
     tags=["account"]
 )
 

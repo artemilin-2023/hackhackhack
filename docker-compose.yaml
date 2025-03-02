@@ -1,7 +1,29 @@
-name: hack
+version: "3.8"
+
+x-logging: &logging
+    logging:
+      driver: "loki"
+      options:
+        loki-url: "http://localhost:3100/loki/api/v1/push"
+        loki-batch-size: "100"
+        loki-retries: 2
+        loki-max-backoff: 1000ms
+        loki-timeout: 1s
+
+# Общие настройки ресурсов для всех сервисов
+x-resources: &default-resources
+  deploy:
+    resources:
+      limits:
+        cpus: '0.50'
+        memory: 512M
+      reservations:
+        cpus: '0.25'
+        memory: 256M
 
 services:
   backend:
+    <<: [*logging, *default-resources]
     build: 
       context: backend
       dockerfile: Dockerfile
@@ -15,10 +37,10 @@ services:
       - JWT_VARY_SECRET_HASH_IN_PUBLIC_REPO=1965d3ece323947d9a778a9341cc68828e708842dc8f809750fcf9985f27d67e
       - JWT_ALGORITHM=HS256
       - JWT_ACCESS_TOKEN_EXPIRE_HOURS=24
-      - CORS_ALLOWED_ORIGINS=http://localhost:5173,https://localhost:5173,http://localhost:5174,https://localhost:5174
+      - CORS_ALLOWED_ORIGINS=https://hack.lcma.tech
       - CORS_ALLOW_CREDENTIALS=true
-      - CORS_ALLOW_METHODS=*
-      - CORS_ALLOW_HEADERS=*
+      - CORS_ALLOW_METHODS=GET,POST,PUT,DELETE,OPTIONS
+      - CORS_ALLOW_HEADERS=DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization
       - FTP_HOST=ftp-server
       - FTP_PORT=21
       - FTP_USER=admin
@@ -32,10 +54,8 @@ services:
         condition: service_started
         
   ftp-server:
+    <<: [*logging, *default-resources]
     build: ./ftp-server
-    ports:
-      - "21:21"
-      - "60000-60100:60000-60100"
     volumes:
       - ./ftp-server/files:/app/files
     environment:
@@ -49,6 +69,15 @@ services:
 
 
   postgres:
+    <<: [*logging, *default-resources]
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
     image: postgres
     environment:
       - POSTGRES_PASSWORD=password
@@ -66,6 +95,7 @@ services:
 
 
   pgadmin:
+    <<: [*logging, *default-resources]
     container_name: pgadmin4
     image: dpage/pgadmin4
     environment:
@@ -76,8 +106,65 @@ services:
     volumes:
       - pgadmin-data:/var/lib/pgadmin
 
+  nginx:
+    <<: [*logging, *default-resources]
+    image: nginx
+    volumes:
+      - ./configs/nginx.conf:/etc/nginx/nginx.conf:ro
+      # - ./ssl/cloudflare.crt:/etc/nginx/ssl/cert/cloudflare.crt:ro
+      # - ./ssl/cloudflare.key:/etc/nginx/ssl/private/cloudflare.key:ro
+    ports:
+      - 80:80
+      - 443:443
+      
+  prometheus:
+    <<: [*logging, *default-resources]
+    image: prom/prometheus
+    restart: unless-stopped
+    volumes:
+      - ./configs/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_storage:/prometheus
+    depends_on:
+      - cadvisor
+
+
+  cadvisor:
+    <<: [*logging, *default-resources]
+    image: gcr.io/cadvisor/cadvisor
+    restart: unless-stopped
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    
+  grafana:
+    <<: [*logging, *default-resources]
+    image: grafana/grafana-oss
+    restart: unless-stopped
+    volumes:
+      - grafana_storage:/var/lib/grafana
+      - ./configs/grafana/provisioning/datasources/:/etc/grafana/provisioning/datasources
+    depends_on:
+      - prometheus
+      - loki
+    
+  loki:
+    <<: [*logging, *default-resources]
+    image: grafana/loki
+    restart: unless-stopped
+    environment:
+      - TZ="Europe/Moscow"
+    volumes:
+      - ./configs/loki/retention-config.yaml:/etc/loki/retention-config.yaml
+    command: -config.file=/etc/loki/retention-config.yaml -config.expand-env=true
+    ports:
+      - 3100:3100
+    
 
 volumes:
+  prometheus_storage:
+  grafana_storage:
   postgres-data:
   pgadmin-data:
     

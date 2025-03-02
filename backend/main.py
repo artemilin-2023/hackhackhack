@@ -65,16 +65,16 @@ app.include_router(order_routes.router)
 
 restricted_routes = {
     # любой маршрут, начинающийся с /lots, кроме /lots/active
-    r"^\/lots(\/(?!active$)(\d+)?)?$": {
+    r"^\/api\/lots(\/(?!active$)(\d+)?)?$": {
         "methods": ["POST", "DELETE", "PATCH", "GET"],
         "required_roles": [Role.admin]
     },
-    r"^\/oil-pumps.*$": {
+    r"^\/api\/oil-pumps.*$": {
         "methods": ["POST", "DELETE", "PATCH"],
         "required_roles": [Role.admin]
     },
     # любой маршрут, кроме /login, /register, /docs, требует наличия авторизации.
-    r"^(?!\/(?:login|register|docs|openapi.json)$).*$": {
+    r"^(?!\/api(?:login|register|docs|openapi.json)$).*$": {
         "methods": ["POST", "DELETE", "GET", "PATCH", "PUT"],
         "required_roles": [Role.admin, Role.customer]
     }

@@ -14,7 +14,7 @@ from dependencies import LotServiceDep, FTPClientServiceDep
 from domain.lot import LotStatus, OilType
 
 router = APIRouter(
-    prefix="/lots",
+    prefix="/api/lots",
     tags=["lots"]
 )
 

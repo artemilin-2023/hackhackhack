@@ -11,7 +11,7 @@ from api.models.oil_pump_models import (
 from dependencies import OilPumpServiceDep
 
 router = APIRouter(
-    prefix="/oil-pumps",
+    prefix="/api/oil-pumps",
     tags=["oil pumps"]
 )
 

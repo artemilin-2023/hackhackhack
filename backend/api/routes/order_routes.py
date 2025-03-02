@@ -14,7 +14,7 @@ from domain.order import OrderStatus
 from domain.lot import Lot
 
 router = APIRouter(
-    prefix="/orders",
+    prefix="/api/orders",
     tags=["orders"]
 )
 

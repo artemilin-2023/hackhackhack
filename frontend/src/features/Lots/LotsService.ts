@@ -83,4 +83,8 @@ export default class LotsService {
 	static async getPumpNames(): Promise<AxiosResponse<Array<string>>> {
 		return $api.get<Array<string>>("/oil-pumps/names");
 	}
+
+	static async patchLot(lot_id: number, update: ICreateLotProps): Promise<AxiosResponse<any>> {
+		return $api.patch<any>(`/lots/${lot_id}`, update);
+	}
 }

@@ -41,3 +41,11 @@ export interface INewLot {
 		region: string;
 	};
 }
+
+export interface IPatchLotProps {
+	lot_expiration_date: string;
+	available_weight: number;
+	status: "Подтвержден" | "Продан" | "Неактивен";
+	total_price: number;
+	price_per_ton: number;
+}

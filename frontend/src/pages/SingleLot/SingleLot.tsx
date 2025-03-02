@@ -70,11 +70,11 @@ export const SingleLot = () => {
 				<div className={styles.price}>
 					<div>
 						<h4>Цена за тонну</h4>
-						<p>{lot.price_per_ton} ₽</p>
+						<p>{(Math.round(lot.price_per_ton * 10) / 10).toLocaleString()} ₽</p>
 					</div>
 					<div>
 						<h4>Общая стоимость</h4>
-						<p>{lot.total_price} ₽</p>
+						<p>{(Math.round(lot.total_price * 10) / 10).toLocaleString()} ₽</p>
 					</div>
 				</div>
 				<div className={styles.expiration}>

@@ -78,7 +78,6 @@ export const UploadCSV = () => {
 					) : (
 						<>
 							<p>Перетащите CSV файл сюда или кликните для выбора</p>
-							<p className={styles.dropzoneHint}>Поддерживаются только CSV файлы</p>
 						</>
 					)}
 				</div>

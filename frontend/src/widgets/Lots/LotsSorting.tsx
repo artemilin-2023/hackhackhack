@@ -4,6 +4,7 @@ import { HiTag, HiScale, HiCalendar, HiSearch, HiFilter, HiX } from "react-icons
 import { HiArrowUp, HiArrowDown } from "react-icons/hi";
 import styles from './LotsSorting.module.css';
 import { debounce } from "shared/lib/debounce";
+import useWindowDimensions from "shared/lib/dimension";
 
 interface SortOption {
 	label: string;
@@ -65,6 +66,7 @@ export const LotsSorting = ({
 	const [searchQuery, setSearchQuery] = useState<string>("")
 	const [isFilterOpen, setIsFilterOpen] = useState(false);
 	const filterRef = useRef<HTMLDivElement>(null);
+	const { width } = useWindowDimensions();
 	
 	const debouncedSearch = useCallback(
 		debounce((query: string) => {
@@ -93,6 +95,18 @@ export const LotsSorting = ({
 			document.removeEventListener('mousedown', handleClickOutside);
 		};
 	}, []);
+	
+	useEffect(() => {
+		if (width <= 768 && isFilterOpen) {
+			document.body.style.overflow = 'hidden';
+		} else {
+			document.body.style.overflow = 'auto';
+		}
+		
+		return () => {
+			document.body.style.overflow = 'auto';
+		}
+	}, [isFilterOpen, width]);
 
 	const handleSelectOilType = (type: string | undefined) => {
 		onOilTypeChange(type);
@@ -106,6 +120,19 @@ export const LotsSorting = ({
 		onOilTypeChange(undefined);
 		onPumpNameChange(undefined);
 	};
+	
+	useEffect(() => {
+		const handleResize = () => {
+			if (window.innerWidth > 768 && isFilterOpen) {
+				setIsFilterOpen(false);
+			}
+		};
+		
+		window.addEventListener('resize', handleResize);
+		return () => {
+			window.removeEventListener('resize', handleResize);
+		};
+	}, [isFilterOpen]);
 
 	return (
 		<div className={styles.container}>
@@ -139,68 +166,76 @@ export const LotsSorting = ({
 				</Button>
 				
 				{isFilterOpen && (
-					<div className={styles.filterPopover}>
-						<div className={styles.filterHeader}>
-							<h3>Фильтры</h3>
-							{(selectedOilType || selectedPumpName) && (
-								<Button 
-									variant="outline" 
-									className={styles.resetButton}
-									onClick={handleResetFilters}
-								>
-									Сбросить
-								</Button>
-							)}
-							<button 
-								className={styles.closeButton}
+					<>
+						{width <= 768 && (
+							<div 
+								className={styles.overlay} 
 								onClick={() => setIsFilterOpen(false)}
-							>
-								<HiX />
-							</button>
-						</div>
-						
-						<div className={styles.filterSection}>
-							<h4 className={styles.filterTitle}>Тип топлива</h4>
-							<div className={styles.filterOptions}>
-								<div 
-									className={`${styles.filterOption} ${!selectedOilType ? styles.selected : ''}`}
-									onClick={() => handleSelectOilType(undefined)}
-								>
-									Все типы
-								</div>
-								{oilTypes.map(type => (
-									<div 
-										key={type} 
-										className={`${styles.filterOption} ${selectedOilType === type ? styles.selected : ''}`}
-										onClick={() => handleSelectOilType(type)}
+							/>
+						)}
+						<div className={styles.filterPopover}>
+							<div className={styles.filterHeader}>
+								<h3>Фильтры</h3>
+								{(selectedOilType || selectedPumpName) && (
+									<Button 
+										variant="outline" 
+										className={styles.resetButton}
+										onClick={handleResetFilters}
 									>
-										{type}
+										Сбросить
+									</Button>
+								)}
+								<button 
+									className={styles.closeButton}
+									onClick={() => setIsFilterOpen(false)}
+								>
+									<HiX />
+								</button>
+							</div>
+							
+							<div className={styles.filterSection}>
+								<h4 className={styles.filterTitle}>Тип топлива</h4>
+								<div className={styles.filterOptions}>
+									<div 
+										className={`${styles.filterOption} ${!selectedOilType ? styles.selected : ''}`}
+										onClick={() => handleSelectOilType(undefined)}
+									>
+										Все типы
 									</div>
-								))}
+									{oilTypes.map(type => (
+										<div 
+											key={type} 
+											className={`${styles.filterOption} ${selectedOilType === type ? styles.selected : ''}`}
+											onClick={() => handleSelectOilType(type)}
+										>
+											{type}
+										</div>
+									))}
+								</div>
+							</div>
+							
+							<div className={styles.filterSection}>
+								<h4 className={styles.filterTitle}>Нефтебаза</h4>
+								<div className={styles.filterOptions}>
+									<div 
+										className={`${styles.filterOption} ${!selectedPumpName ? styles.selected : ''}`}
+										onClick={() => handleSelectPumpName(undefined)}
+									>
+										Все нефтебазы
+									</div>
+									{pumpNames.map(name => (
+										<div 
+											key={name} 
+											className={`${styles.filterOption} ${selectedPumpName === name ? styles.selected : ''}`}
+											onClick={() => handleSelectPumpName(name)}
+										>
+											{name}
+										</div>
+									))}
+								</div>
 							</div>
 						</div>
-						
-						<div className={styles.filterSection}>
-							<h4 className={styles.filterTitle}>Нефтебаза</h4>
-							<div className={styles.filterOptions}>
-								<div 
-									className={`${styles.filterOption} ${!selectedPumpName ? styles.selected : ''}`}
-									onClick={() => handleSelectPumpName(undefined)}
-								>
-									Все нефтебазы
-								</div>
-								{pumpNames.map(name => (
-									<div 
-										key={name} 
-										className={`${styles.filterOption} ${selectedPumpName === name ? styles.selected : ''}`}
-										onClick={() => handleSelectPumpName(name)}
-									>
-										{name}
-									</div>
-								))}
-							</div>
-						</div>
-					</div>
+					</>
 				)}
 			</div>
 			

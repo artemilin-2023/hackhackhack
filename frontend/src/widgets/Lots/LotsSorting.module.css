@@ -2,7 +2,8 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
 }
 
 .sortButtons {
@@ -15,6 +16,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    white-space: nowrap;
 }
 
 .directionButton {
@@ -22,25 +24,35 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    white-space: nowrap;
 }
 
 .buttonIcon {
     width: 1.25rem;
     height: 1.25rem;
+    margin-right: 0.5rem;
 }
 
 .searchInputWrapper {
     position: relative;
     display: flex;
     align-items: center;
+    width: 100%;
 }
 
 .searchIcon {
     position: absolute;
     left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
     width: 1.25rem;
     height: 1.25rem;
     color: var(--muted-foreground);
+}
+
+.formGroup {
+    flex: 1;
+    min-width: 200px;
 }
 
 .formGroup input {
@@ -73,6 +85,7 @@
     align-items: center;
     gap: 0.5rem;
     position: relative;
+    white-space: nowrap;
 }
 
 .filterBadge {
@@ -88,7 +101,7 @@
     align-items: center;
     justify-content: center;
     font-size: 0.75rem;
-    font-weight: bold;
+    font-weight: 600;
 }
 
 .filterPopover {
@@ -183,6 +196,36 @@
     .container {
         flex-direction: column;
         align-items: stretch;
+        gap: 0.75rem;
+    }
+    
+    .sortButtons {
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+        width: 100%;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .sortButton {
+        flex-shrink: 0;
+    }
+    
+    .filterContainer {
+        width: 100%;
+    }
+    
+    .filterButton {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .formGroup {
+        width: 100%;
+    }
+    
+    .directionButton {
+        width: 100%;
+        justify-content: center;
     }
     
     .filterPopover {
@@ -195,6 +238,22 @@
         border-radius: var(--radius) var(--radius) 0 0;
         max-height: 70vh;
         overflow-y: auto;
+        z-index: 100;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+        animation: slideUp 0.3s ease;
+    }
+    
+    @keyframes slideUp {
+        from {
+            transform: translateY(100%);
+        }
+        to {
+            transform: translateY(0);
+        }
+    }
+    
+    .filterOptions {
+        max-height: 120px;
     }
 }
 

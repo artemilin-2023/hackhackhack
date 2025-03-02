@@ -1,5 +1,20 @@
-.Grid {
+.grid {
 	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	gap: 16px;
+	grid-template-columns: repeat(var(--grid-cols-sm, 1), 1fr);
+	gap: var(--grid-gap, 1rem);
+	width: 100%;
+}
+
+/* Medium screens (tablets) */
+@media (min-width: 768px) {
+	.grid {
+		grid-template-columns: repeat(var(--grid-cols-md, 2), 1fr);
+	}
+}
+
+/* Large screens (desktops) */
+@media (min-width: 1024px) {
+	.grid {
+		grid-template-columns: repeat(var(--grid-cols-lg, 3), 1fr);
+	}
 }

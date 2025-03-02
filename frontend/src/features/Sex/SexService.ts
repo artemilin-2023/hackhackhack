@@ -4,7 +4,7 @@ import { AxiosResponse } from "axios";
 type SexResponse = "Не было"
 
 export default class SexService {
-	static async getSex(): Promise<AxiosResponse<SexResponse>> {
+	static async getSexInfo(): Promise<AxiosResponse<SexResponse>> {
 		return $api.get<SexResponse>("/sex")
 	}
 }

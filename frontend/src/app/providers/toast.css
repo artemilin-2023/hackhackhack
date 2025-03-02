@@ -1,0 +1,59 @@
+/* Можно добавить в src/app/layouts/global.css или создать новый файл */
+
+/* Стили для тостов */
+.custom-toast {
+  background-color: var(--card) !important;
+  color: var(--foreground) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  font-family: inherit !important;
+  padding: 1rem !important;
+}
+
+.custom-toast-progress {
+  background: var(--primary) !important;
+}
+
+/* .Toastify__toast--success {
+  border-left: 4px solid rgb(34, 197, 94) !important;
+}
+
+.Toastify__toast--error {
+  border-left: 4px solid rgb(239, 68, 68) !important;
+}
+
+.Toastify__toast--warning {
+  border-left: 4px solid rgb(245, 158, 11) !important;
+}
+
+.Toastify__toast--info {
+  border-left: 4px solid rgb(59, 130, 246) !important;
+} */
+
+.Toastify__close-button {
+  color: var(--muted-foreground) !important;
+  opacity: 0.7 !important;
+}
+
+.Toastify__close-button:hover {
+  opacity: 1 !important;
+}
+
+.Toastify__toast--enter {
+  transform: translateX(100%);
+}
+
+.Toastify__toast--enter-active {
+  transform: translateX(0);
+  transition: transform 0.3s ease-in-out;
+}
+
+.Toastify__toast--exit {
+  transform: translateX(0);
+}
+
+.Toastify__toast--exit-active {
+  transform: translateX(100%);
+  transition: transform 0.3s ease-in-out;
+}

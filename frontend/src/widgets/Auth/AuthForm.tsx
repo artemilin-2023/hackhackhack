@@ -22,8 +22,14 @@ export const AuthForm = () => {
 
 		if (mode === 'login') {
 			store.login(formData.email, formData.password);
+			setTimeout(() => {
+				store.getMe();
+			}, 400);
 		} else {
 			store.register(formData);
+			setTimeout(() => {
+				store.getMe();
+			}, 400);
 		}
 	};
 

@@ -20,30 +20,22 @@ export const AuthForm = () => {
 		e.preventDefault();
 
 		// ahaha start
-		if (mode === 'login') {
-			store.login(formData.email, formData.password);
-			setTimeout(() => {
-				store.getMe();
-				setTimeout(() => {
-					store.getMe();
-					setTimeout(() => {
-						store.getMe();
-					}, 600);
+		async function auth() {
+			if (mode === 'login') {
+				await store.login(formData.email, formData.password);
+				setInterval(() => {
+					store.getMe();;
 				}, 600);
-			}, 600);
-			
-		} else {
-			store.register(formData);
-			setTimeout(() => {
-				store.getMe();
-				setTimeout(() => {
+				
+			} else {
+				await store.register(formData);
+				setInterval(() => {
 					store.getMe();
-					setTimeout(() => {
-						store.getMe();
-					}, 600);
 				}, 600);
-			}, 600);
+			}
 		}
+
+		auth()
 		// ahaha end
 	};
 

@@ -39,8 +39,9 @@ class FTPClientService:
                     result = self.lot_service._upload_from_csv(csv_reader)
                     log.info(f"Результат обработки файла {filename}: {result}")
 
-                    ftp.delete(filename)
-                    log.info(f"Файл {filename} обработан и удалён с FTP-сервера.")
+                    # раскоммитить если нужно удаление файла после его загрузки
+                    #ftp.delete(filename)
+                    #log.info(f"Файл {filename} обработан и удалён с FTP-сервера.")
 
             ftp.quit()
         except Exception as e:

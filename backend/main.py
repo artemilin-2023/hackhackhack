@@ -12,7 +12,7 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.routes import user_routes, lot_routes, oil_pump_routes
+from api.routes import user_routes, lot_routes, oil_pump_routes, order_routes
 from dependencies import get_static_user_service
 from domain.user import Role
 from infrastructure.database import on_start_up
@@ -59,7 +59,7 @@ app.add_middleware(
 app.include_router(user_routes.router)
 app.include_router(lot_routes.router)
 app.include_router(oil_pump_routes.router)
-# app.include_router(order_routes.router)
+app.include_router(order_routes.router)
 
 restricted_routes = {
     # любой маршрут, начинающийся с /lots, кроме /lots/active

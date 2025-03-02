@@ -2,110 +2,121 @@ from fastapi import HTTPException
 from starlette import status
 from starlette.requests import Request
 import math
+from typing import Optional, List, Dict, Any
+from datetime import date, datetime
 
 from application.services.user_services import UserService
 from domain.user import Role
 from infrastructure.repositories.order_repository import OrderRepository
 from domain.order import Order, OrderStatus
-from api.models.order_models import OrderCreate, OrderUpdateStatus, PaginatedOrders
+from api.models.order_models import OrdersCreate, OrdersRead, PaginatedOrders
 from api.models.lot_models import Pagination
+from domain.lot import Lot, LotStatus
+from infrastructure.repositories.lot_repository import LotRepository
+from api.models.order_models import OrderFilter
 
 
 class OrderService:
-    pass
-    # def __init__(self, order_repository: OrderRepository, user_service: UserService):
-    #     self._order_repository = order_repository
-    #     self._user_service = user_service
+    def __init__(self, order_repository: OrderRepository, lot_repository: LotRepository, user_service: UserService):
+        self._order_repository = order_repository
+        self._lot_repository = lot_repository
+        self._user_service = user_service
 
-    # def create_order(self, order_create: OrderCreate, request: Request):
-    #     user = self._user_service.get_current_user(request)
-    #     if user.role != Role.customer:
-    #         raise HTTPException(status_code=403, detail="You are not a customer")
+    def create_order(self, request: Request, order_data: OrdersCreate) -> OrdersRead:
+        lots_in_order = []
+        for order in order_data.orders:
+            lot = self._lot_repository.get_by_id(order.lot_id)
+            if not lot:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Lot with id {order.lot_id} not found"
+                )
+
+            if lot.status != LotStatus.CONFIRMED:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Cannot create order for non-active lot"
+                )
+
+            if lot.available_weight < order.volume:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Requested volume exceeds available weight. Available: {lot.available_weight}"
+                )
+
+            user = self._user_service.get_current_user(request)
+            order = Order(
+                order_date=date.today(),
+                lot_id=lot.id,
+                volume=order.volume,
+                delivery_type=order.delivery_type,
+                customer_id=user.id,
+                status=OrderStatus.PENDING
+            )
+
+            if lot.available_weight == order.volume:
+                self._lot_repository.update(lot.id, {"status": LotStatus.SOLD})
+
+            self._order_repository.create(order)
+            lots_in_order.append(lot)
+
+        return OrdersRead(orders=lots_in_order)
+
+    def get_lots_by_user(
+        self,
+        request: Request,
+        page: int = 1,
+        size: int = 10,
+        filters: Optional[OrderFilter] = None,
+        sort_by: str = "id",
+        sort_desc: bool = False,
+    ) -> OrdersRead:
+        filters_dict = filters.model_dump(exclude_none=True) if filters else {}
         
-    #     total_price = order_create.quantity * order_create.price_per_unit
-    #     order = Order(
-    #         customer_id=user.id,
-    #         seller_id=order_create.seller_id,
-    #         lot_id=order_create.lot_id,
-    #         quantity=order_create.quantity,
-    #         price_per_unit=order_create.price_per_unit,
-    #         total_price=total_price,
-    #         status=OrderStatus.pending
-    #     )
-    #     return self._order_repository.create_order(order)
-
-    # def get_all_orders_by_user(self, request: Request, page_number: int = 1, page_size: int = 10) -> PaginatedOrders:
-    #     user = self._user_service.get_current_user(request)
-    #     orders = self._order_repository.get_orders_by_user(user.id, page_number, page_size)
-    #     total_orders = self._order_repository.count_orders_by_user(user.id)
-    #     total_pages = math.ceil(total_orders / page_size)
-    #     has_next = page_number < total_pages
-    #     has_prev = page_number > 1
+        user = self._user_service.get_current_user(request)
+        if user.role != Role.ADMIN:
+            filters_dict["customer_id"] = user.id
         
-    #     pagination = Pagination(
-    #         total_pages=total_pages,
-    #         current_page=page_number,
-    #         has_next=has_next,
-    #         has_prev=has_prev,
-    #     )
-    #     return PaginatedOrders(orders=orders, pagination=pagination)
+        lots, total_count = self._order_repository.get_many_lots_by_customer(
+            customer_id=user.id,
+            page=page,
+            size=size,
+            filters=filters_dict,
+            sort_by=sort_by,
+            sort_desc=sort_desc
+        )
 
-    # def update_order_status(self, order_id: int, order_update: OrderUpdateStatus, request: Request):
-    #     user = self._user_service.get_current_user(request)
-    #     order = self._order_repository.get_by_id(order_id)
-        
-    #     if not order:
-    #         raise HTTPException(
-    #             status_code=status.HTTP_404_NOT_FOUND,
-    #             detail="This order was not found"
-    #         )
+        total_pages = math.ceil(total_count / size)
+        has_next = page < total_pages
+        has_prev = page > 1
 
-    #     if user.role == Role.customer and order.customer_id != user.id:
-    #         raise HTTPException(
-    #             status_code=status.HTTP_403_FORBIDDEN,
-    #             detail="You can only update your own orders"
-    #         )
+        pagination = Pagination(
+            total_pages=total_pages,
+            current_page=page,
+            has_next=has_next,
+            has_prev=has_prev,
+            total_items=total_count,
+            page_size=size
+        )
 
-    #     if user.role == Role.seller and order.seller_id != user.id:
-    #         raise HTTPException(
-    #             status_code=status.HTTP_403_FORBIDDEN, 
-    #             detail="You can only update orders where you are the seller"
-    #         )
+        return PaginatedOrders(
+            items=lots,
+            pagination=pagination
+        )
 
-    #     if order.status == OrderStatus.cancelled:
-    #         raise HTTPException(
-    #             status_code=status.HTTP_400_BAD_REQUEST,
-    #             detail="Cannot update cancelled order"
-    #         )
+    def get_order_by_id(self, order_id: int) -> Order:
+        order = self._order_repository.get_by_id(order_id)
+        if not order:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Order with id {order_id} not found"
+            )
 
-    #     if user.role == Role.customer and order_update.status not in [OrderStatus.cancelled]:
-    #         raise HTTPException(
-    #             status_code=status.HTTP_403_FORBIDDEN,
-    #             detail="Customer can only cancel order"
-    #         )
+        user = self._user_service.get_current_user()
+        if user.role != Role.ADMIN and order.customer_id != user.id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You don't have permission to access this order"
+            )
 
-    #     if user.role == Role.seller and order_update.status not in [OrderStatus.accepted, OrderStatus.rejected]:
-    #         raise HTTPException(
-    #             status_code=status.HTTP_403_FORBIDDEN,
-    #             detail="Seller can only accept or reject order"
-    #         )
-
-    #     return self._order_repository.update_order(order, {"status": order_update.status})
-
-    # def delete_order(self, order_id: int, request: Request):
-    #     user = self._user_service.get_current_user(request)
-    #     order = self._order_repository.get_by_id(order_id)
-
-    #     if order.customer_id == user.id and order.status != OrderStatus.pending:
-    #         raise HTTPException(
-    #             status_code=status.HTTP_403_FORBIDDEN,
-    #             detail="You can cancel an order only if it is still pending."
-    #         )
-
-    #     if order.seller_id != user.id and user.role != Role.admin:
-    #         raise HTTPException(
-    #             status_code=status.HTTP_403_FORBIDDEN,
-    #             detail="You can cancel an order only if you are the seller of that order."
-    #         )
-
-    #     self._order_repository.delete(order)
+        return order

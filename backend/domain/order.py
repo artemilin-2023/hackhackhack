@@ -9,6 +9,9 @@ class OrderStatus(str, Enum):
     COMPLETED = "Выполнен"
     CANCELED = "Отменен"
 
+class DeliveryType(str, Enum):
+    DELIVERY = "Доставка"
+    SELF_PICKUP = "Самовывоз"
 
 
 class Order(SQLModel, table=True):
@@ -16,6 +19,6 @@ class Order(SQLModel, table=True):
     order_date: date = Field(default_factory=date.today)
     lot_id: int = Field(foreign_key="lot.id")
     volume: float
-    delivery_type: str
+    delivery_type: DeliveryType = Field(default=DeliveryType.DELIVERY)
     customer_id: int = Field(foreign_key="user.id")
     status: OrderStatus = Field(default=OrderStatus.PENDING)

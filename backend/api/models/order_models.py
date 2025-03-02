@@ -1,37 +1,33 @@
-from typing import List
-from pydantic import BaseModel
-from datetime import datetime
+from datetime import date
+from typing import List, Optional
+from pydantic import BaseModel, Field
+from api.models.pagination import Pagination
+from domain.order import OrderStatus
+from domain.lot import Lot
+from domain.order import DeliveryType
+class OrderBase(BaseModel):
+    lot_id: int = Field(..., gt=0)
+    volume: float = Field(..., gt=0)
+    delivery_type: DeliveryType
 
-from domain.order import Order, OrderStatus
-from api.models.lot_models import Pagination
+class OrdersCreate(BaseModel):
+    orders: List[OrderBase]
 
-
-class OrderCreate(BaseModel):
-    seller_id: int
-    lot_id: int
-    quantity: float
-    price_per_unit: float
-
-
-class OrderUpdateStatus(BaseModel):
-    status: OrderStatus
-
-class OrderRead(BaseModel):
-    id: int
-    customer_id: int
-    seller_id: int
-    lot_id: int
-    quantity: float
-    price_per_unit: float
-    total_price: float
-    status: OrderStatus
-    created_at: datetime
-    updated_at: datetime
-
+class OrdersRead(BaseModel):
+    orders: List[Lot]
+    
     class Config:
-        orm_mode = True
+        from_attributes = True
 
+class OrderFilter(BaseModel):
+    status: Optional[OrderStatus] = None
+    min_volume: Optional[float] = None
+    max_volume: Optional[float] = None
+    start_date: Optional[date] = None
+    end_date: Optional[date] = None
+    delivery_type: Optional[str] = None
 
 class PaginatedOrders(BaseModel):
-    orders: List[Order]
+    items: List[Lot]
     pagination: Pagination
+    

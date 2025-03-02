@@ -34,8 +34,12 @@ def get_order_repositories(session=Depends(get_session)):
     return OrderRepository(session)
 
 
-def get_order_service(repository=Depends(get_order_repositories), user_service=Depends(get_user_service)):
-    return OrderService(repository, user_service)
+def get_order_service(
+    repository=Depends(get_order_repositories),
+    lot_repository=Depends(get_lot_repository),
+    user_service=Depends(get_user_service)
+):
+    return OrderService(repository, lot_repository, user_service)
 
 
 def get_oil_pump_repository(session=Depends(get_session)):

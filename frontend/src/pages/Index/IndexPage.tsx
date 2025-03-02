@@ -1,17 +1,17 @@
 import styles from './IndexPage.module.css'
-import { useStore } from 'shared/store/store'
-import { useEffect } from 'react'
+// import { useStore } from 'shared/store/store'
+// import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from 'shared/ui/button'
 
 export const IndexPage = () => {
-    const store = useStore()
+    // const store = useStore()
     const navigate = useNavigate()
     
-    useEffect(() => {
-        // Загружаем несколько популярных товаров для отображения на главной
-        store.getLots(1, 3, 'price_per_ton', true)
-    }, [])
+    // useEffect(() => {
+    //     // Загружаем несколько популярных товаров для отображения на главной
+    //     store.getLots(1, 3, 'price_per_ton', true)
+    // }, [])
     
     return (
         <div className={styles.container}>
@@ -58,7 +58,9 @@ export const IndexPage = () => {
                 </div>
             </div>
 
-            <div className={styles.popularProducts}>
+            {/* патом */}
+
+            {/* <div className={styles.popularProducts}>
                 <h2 className={styles.sectionTitle}>Популярные товары</h2>
                 <div className={styles.productsGrid}>
                     {store.lots && store.lots.length > 0 ? (
@@ -91,7 +93,7 @@ export const IndexPage = () => {
                         Смотреть все товары
                     </Button>
                 </div>
-            </div>
+            </div> */}
 
             <div className={styles.howItWorks}>
                 <h2 className={styles.sectionTitle}>Как это работает</h2>
